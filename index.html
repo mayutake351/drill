@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット Ver2.0</title>
+<title>まこペット Ver2.1</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,48 +11,52 @@
   <div class="game">
     <img src="makopet_art_ui.png" class="bg" alt="まこペット">
 
-    <div class="scoreBox">
-      <div>今日のポイント</div>
-      <strong><span id="points">0</span> pt</strong>
+    <div class="topScore">
+      <div>今日</div>
+      <strong><span id="todayPoints">0</span>pt</strong>
     </div>
 
-    <div class="statusPanel">
-      <div>💗 なかよし <b id="friend">80</b>/100</div>
-      <div>🍖 おなか <b id="hunger">70</b>/100</div>
-      <div>😊 げんき <b id="energy">90</b>/100</div>
-      <div>🌙 ねむけ <b id="sleepy">40</b>/100</div>
+    <div class="rewardBox">
+      <div class="rewardTitle">つぎのごほうび</div>
+      <div id="nextReward">10ptで ごはん🍎</div>
+      <div class="meter"><span id="rewardFill"></span></div>
     </div>
 
-    <div id="cat" class="cat" onclick="petCat()">🐱</div>
-    <div id="bubble" class="bubble">がんばったね！<br>えらいにゃ〜♡</div>
+    <div id="pet" class="pet" onclick="petCat()">🐱</div>
+    <div id="heartFx" class="heartFx hidden">💕</div>
+    <div id="bubble" class="bubble">今日も会えて<br>うれしいにゃ♡</div>
 
     <section class="taskPanel">
-      <h2>🎀 きょうのやること</h2>
+      <h2>きょうのやること</h2>
       <div id="tasks"></div>
-      <button onclick="addTask()">＋ 科目を追加する</button>
+      <button class="addBtn" onclick="addTask()">＋ やること追加</button>
     </section>
 
-    <button class="side feed" onclick="feedCat()">🍚<br>ごはん<br><small>10pt〜</small></button>
-    <button class="side room" onclick="buyFurniture()">🛋<br>おへや</button>
-    <button class="side dress" onclick="dressCat()">👗<br>おようふく</button>
-    <button class="side book" onclick="showBook()">📘<br>ずかん</button>
-    <button class="side settings" onclick="resetAll()">⚙️<br>せってい</button>
+    <section class="actionPanel">
+      <button onclick="feed()">🍎 ごはん<br><small>10pt</small></button>
+      <button onclick="present()">🎁 プレゼント<br><small>30pt</small></button>
+      <button onclick="newEgg()">🥚 たまご<br><small>100pt</small></button>
+    </section>
 
-    <button class="bottom home" onclick="say('おかえりにゃ♡')">🏠<br>ホーム</button>
-    <button class="bottom record" onclick="say('今日も記録できてえらい！')">📒<br>きろく</button>
-    <button class="bottom mission" onclick="say('ミッション達成をめざそう！')">✅<br>ミッション</button>
-    <button class="bottom shop" onclick="say('ポイントでかわいい物を増やそう♪')">🏪<br>ショップ</button>
-    <button class="bottom gacha" onclick="gachaEgg()">🥚<br>ガチャ</button>
+    <section class="statusPanel">
+      <div>❤️ なかよし <b id="friend">50</b></div>
+      <div>🍖 おなか <b id="hunger">70</b></div>
+      <div>🔥 連続 <b id="streak">0</b>日</div>
+    </section>
 
-    <div class="miniPanel">
-      <div>今日のポイント</div>
-      <strong><span id="points2">0</span> pt</strong>
-      <div class="foodMeter"><span id="foodFill"></span></div>
-      <small>10ポイントでごはんがあげられるよ！</small>
-    </div>
+    <section class="collectionPanel">
+      <h2>ずかん</h2>
+      <div id="collection"></div>
+    </section>
+
+    <nav class="bottomNav">
+      <button onclick="say('ホームだにゃ♡')">🏠<br>ホーム</button>
+      <button onclick="say('今日のがんばりを記録するにゃ')">📒<br>きろく</button>
+      <button onclick="say('ポイントでごほうびをもらえるにゃ')">🎁<br>ごほうび</button>
+      <button onclick="resetData()">⚙️<br>リセット</button>
+    </nav>
   </div>
 </main>
-
 <script src="app.js"></script>
 </body>
 </html>

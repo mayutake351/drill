@@ -1,153 +1,162 @@
-const TASK_KEY = "makopet_art_tasks_v1";
-const STATE_KEY = "makopet_art_state_v1";
+const TASK_KEY = "makopet_v21_tasks";
+const STATE_KEY = "makopet_v21_state";
 
 const defaultTasks = [
   { id: 1, name: "📗 こくご", point: 0 },
   { id: 2, name: "🔢 さんすう", point: 0 },
-  { id: 3, name: "漢字ドリル", point: 0 },
-  { id: 4, name: "ABC えいご", point: 0 },
-  { id: 5, name: "👕 きがえ", point: 0 },
-  { id: 6, name: "🪥 はみがき", point: 0 },
+  { id: 3, name: "✏️ 漢字", point: 0 },
+  { id: 4, name: "ABC 英語", point: 0 },
+  { id: 5, name: "📖 読書", point: 0 },
+  { id: 6, name: "🪥 歯みがき", point: 0 }
+];
+
+const rewards = [
+  { point: 10, text: "10ptで ごはん🍎" },
+  { point: 30, text: "30ptで プレゼント🎁" },
+  { point: 100, text: "100ptで 新しいたまご🥚" }
 ];
 
 function load(key, def){
   try { return JSON.parse(localStorage.getItem(key)) ?? def; }
   catch { return def; }
 }
-function save(key, value){
-  localStorage.setItem(key, JSON.stringify(value));
-}
+function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
 
 let tasks = load(TASK_KEY, defaultTasks);
 let state = load(STATE_KEY, {
-  points: 0,
-  friend: 80,
+  totalPoints: 0,
+  todayPoints: 0,
+  friend: 50,
   hunger: 70,
-  energy: 90,
-  sleepy: 40,
-  cat: "🐱"
+  streak: 0,
+  cats: ["🐱"],
+  currentCat: "🐱",
+  lastDate: ""
 });
 
+function today(){ return new Date().toISOString().slice(0,10); }
+
+function updateStreak(){
+  if(state.lastDate !== today()){
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+    state.streak = state.lastDate === yesterday ? state.streak + 1 : 1;
+    state.lastDate = today();
+    tasks.forEach(t => t.point = 0);
+    state.todayPoints = 0;
+  }
+}
+
 function render(){
-  document.getElementById("points").textContent = state.points;
-  document.getElementById("points2").textContent = state.points;
+  updateStreak();
+  document.getElementById("todayPoints").textContent = state.todayPoints;
   document.getElementById("friend").textContent = state.friend;
   document.getElementById("hunger").textContent = state.hunger;
-  document.getElementById("energy").textContent = state.energy;
-  document.getElementById("sleepy").textContent = state.sleepy;
-  document.getElementById("foodFill").style.width = Math.min(100, state.points * 10) + "%";
+  document.getElementById("streak").textContent = state.streak;
 
-  const cat = document.getElementById("cat");
-  cat.textContent = state.cat;
-  cat.className = "cat";
-  if(state.hunger < 35) cat.textContent = "😿";
-  else if(state.friend > 90) cat.textContent = "😻";
+  const pet = document.getElementById("pet");
+  pet.textContent = state.hunger < 30 ? "😿" : (state.friend > 80 ? "😻" : state.currentCat);
+  pet.classList.add("small");
 
-  const box = document.getElementById("tasks");
-  box.innerHTML = "";
+  const next = nextReward();
+  document.getElementById("nextReward").textContent = next.text;
+  document.getElementById("rewardFill").style.width = Math.min(100, state.todayPoints / next.point * 100) + "%";
+
+  const taskBox = document.getElementById("tasks");
+  taskBox.innerHTML = "";
   tasks.forEach(task => {
     const div = document.createElement("div");
     div.className = "task";
     div.innerHTML = `
       <div>${task.name}</div>
       <div class="stars">
-        ${[0,1,2,3].map(n => `<button class="${task.point===n?'on':''}" onclick="setTaskPoint(${task.id},${n})">${n}</button>`).join("")}
+        ${[0,1,2,3].map(n => `<button class="${task.point===n?'on':''}" onclick="setPoint(${task.id},${n})">${n}</button>`).join("")}
       </div>
     `;
-    box.appendChild(div);
+    taskBox.appendChild(div);
   });
+
+  document.getElementById("collection").textContent = state.cats.join(" ");
 
   save(TASK_KEY, tasks);
   save(STATE_KEY, state);
 }
 
-function setTaskPoint(id, point){
+function nextReward(){
+  if(state.todayPoints < 10) return rewards[0];
+  if(state.todayPoints < 30) return rewards[1];
+  return rewards[2];
+}
+
+function setPoint(id, point){
   const task = tasks.find(t => t.id === id);
   if(!task) return;
   const diff = point - task.point;
   task.point = point;
-
   if(diff > 0){
-    state.points += diff;
+    state.todayPoints += diff;
+    state.totalPoints += diff;
     state.friend = Math.min(100, state.friend + diff * 2);
-    state.energy = Math.min(100, state.energy + diff);
     say("がんばったね！<br>えらいにゃ〜♡");
-    animateCat("happy");
-  } else {
+    animatePet("happy");
+    heart();
+    checkMilestone();
+  }else{
+    state.todayPoints = Math.max(0, state.todayPoints + diff);
     say("記録を直したにゃ");
   }
   render();
 }
 
 function addTask(){
-  const name = prompt("追加する科目ややることは？\n例：読書、ピアノ、お手伝い");
+  const name = prompt("追加するやることは？\n例：ピアノ、お手伝い、着替え");
   if(!name) return;
   tasks.push({ id: Date.now(), name: "✨ " + name, point: 0 });
-  say("新しいやることを追加したにゃ！");
+  say("追加したにゃ！");
   render();
 }
 
-function feedCat(){
-  if(state.points < 10){
-    say("10ポイントたまると<br>ごはんが食べられるにゃ");
-    animateCat("hungry");
+function feed(){
+  if(state.todayPoints < 10){
+    say("10ポイントで<br>ごはんが食べられるにゃ");
+    animatePet("eat");
     return;
   }
-  state.points -= 10;
-  state.hunger = Math.min(100, state.hunger + 20);
+  state.todayPoints -= 10;
+  state.hunger = Math.min(100, state.hunger + 25);
   state.friend = Math.min(100, state.friend + 5);
   say("もぐもぐ…<br>おいしいにゃ♡");
-  animateCat("eat");
+  animatePet("eat");
+  heart();
   render();
 }
 
-function buyFurniture(){
-  if(state.points < 20){
-    say("20ポイントで<br>おへやをかわいくできるにゃ");
+function present(){
+  if(state.todayPoints < 30){
+    say("30ポイントで<br>プレゼントが届くにゃ🎁");
     return;
   }
-  state.points -= 20;
-  say("おへやが少し<br>かわいくなったにゃ✨");
+  state.todayPoints -= 30;
+  state.friend = Math.min(100, state.friend + 12);
+  say("プレゼント<br>うれしいにゃ🎁");
+  animatePet("happy");
+  heart();
   render();
 }
 
-function dressCat(){
-  if(state.points < 15){
-    say("15ポイントで<br>おようふくがもらえるにゃ");
+function newEgg(){
+  if(state.todayPoints < 100){
+    say("100ポイントで<br>新しいたまご発見にゃ🥚");
     return;
   }
-  state.points -= 15;
-  state.friend = Math.min(100, state.friend + 8);
-  say("おしゃれしたにゃ🎀");
-  animateCat("happy");
+  state.todayPoints -= 100;
+  const pool = ["🐱","😺","😸","😻","🐈","🐈‍⬛","😽"];
+  const cat = pool[Math.floor(Math.random()*pool.length)];
+  state.currentCat = cat;
+  if(!state.cats.includes(cat)) state.cats.push(cat);
+  say("新しい子に<br>出会えたにゃ！🥚");
+  animatePet("happy");
+  heart();
   render();
-}
-
-function showBook(){
-  alert("ずかん\n\n🐱 まこねこ\n😻 なかよしねこ\n😿 おなかすいたねこ\n\nこれから増えるよ！");
-}
-
-function gachaEgg(){
-  if(state.points < 30){
-    say("30ポイントで<br>たまごを見にいけるにゃ");
-    return;
-  }
-  state.points -= 30;
-  const cats = ["🐱","😺","😸","😻","🐈","🐈‍⬛"];
-  state.cat = cats[Math.floor(Math.random()*cats.length)];
-  say("新しい子に会えたにゃ！");
-  animateCat("happy");
-  render();
-}
-
-function resetAll(){
-  if(confirm("データをリセットする？")){
-    localStorage.removeItem(TASK_KEY);
-    localStorage.removeItem(STATE_KEY);
-    tasks = JSON.parse(JSON.stringify(defaultTasks));
-    state = {points:0,friend:80,hunger:70,energy:90,sleepy:40,cat:"🐱"};
-    render();
-  }
 }
 
 function petCat(){
@@ -159,26 +168,47 @@ function petCat(){
     "にゃ〜♪"
   ];
   say(lines[Math.floor(Math.random()*lines.length)]);
-  animateCat("happy");
+  animatePet("happy");
+  heart();
   render();
 }
 
-function say(text){
-  document.getElementById("bubble").innerHTML = text;
+function say(text){ document.getElementById("bubble").innerHTML = text; }
+
+function animatePet(cls){
+  const pet = document.getElementById("pet");
+  pet.classList.remove("happy","eat","sleep");
+  void pet.offsetWidth;
+  pet.classList.add(cls);
+  setTimeout(() => pet.classList.remove(cls), 1600);
 }
 
-function animateCat(name){
-  const cat = document.getElementById("cat");
-  cat.classList.remove("happy","eat","sleep","hungry");
-  void cat.offsetWidth;
-  cat.classList.add(name);
-  setTimeout(() => cat.classList.remove(name), 1600);
+function heart(){
+  const fx = document.getElementById("heartFx");
+  fx.classList.remove("hidden");
+  void fx.offsetWidth;
+  setTimeout(() => fx.classList.add("hidden"), 950);
+}
+
+function checkMilestone(){
+  if(state.todayPoints === 10) say("🍎 ごはんゲット！<br>すごいにゃ♡");
+  if(state.todayPoints === 30) say("🎁 プレゼントまで<br>到達したにゃ！");
+  if(state.todayPoints === 100) say("🥚 新しいたまごを<br>見つけたにゃ！");
+}
+
+function resetData(){
+  if(!confirm("データをリセットする？")) return;
+  localStorage.removeItem(TASK_KEY);
+  localStorage.removeItem(STATE_KEY);
+  tasks = JSON.parse(JSON.stringify(defaultTasks));
+  state = { totalPoints:0, todayPoints:0, friend:50, hunger:70, streak:0, cats:["🐱"], currentCat:"🐱", lastDate:"" };
+  say("リセットしたにゃ");
+  render();
 }
 
 setInterval(() => {
   state.hunger = Math.max(0, state.hunger - 1);
-  state.sleepy = Math.min(100, state.sleepy + 1);
-  if(state.hunger < 35) say("おなかすいたにゃ…");
+  if(state.hunger < 30) say("おなかすいたにゃ…");
   render();
 }, 60000);
 
