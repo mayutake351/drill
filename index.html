@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット Ver1.2</title>
+<title>まこペット Ver1.3</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
   <h1>🐾 まこペット 🐾</h1>
-  <div class="sub">Ver1.2：ねこが瞬きして、おしゃべりするようになったよ</div>
+  <div class="sub">Ver1.3：かわいい絵文字ねこに戻したよ</div>
 
   <section id="home">
     <div class="card room" id="room">
@@ -27,7 +27,7 @@
 
       <div class="petStage" onclick="tapPet()">
         <div id="hatLayer" class="hatLayer"></div>
-        <div id="petArt"></div>
+        <div id="petEmoji" class="petEmoji">🥚</div>
         <div id="ribbonLayer" class="ribbonLayer"></div>
         <div id="moodBubble" class="moodBubble hidden">にゃ♪</div>
       </div>
@@ -98,18 +98,18 @@
   <section id="note" class="hidden">
     <div class="card devnote">
       <h2>📒 開発ノート</h2>
-      <h3>Ver1.2</h3>
+      <h3>Ver1.3</h3>
       <ul>
-        <li>猫が瞬きする</li>
-        <li>猫がしっぽを振る</li>
-        <li>タップ・ごはん・あそぶで吹き出しが出る</li>
-        <li>性格を追加</li>
+        <li>CSS手描きねこをやめた</li>
+        <li>絵文字ねこを大きく表示</li>
+        <li>表情が変わるようにした</li>
+        <li>着せ替えを見やすくした</li>
       </ul>
       <h3>次に作る候補</h3>
       <ul>
+        <li>猫の種類をもっと増やす</li>
         <li>レアたまご</li>
         <li>毎日ログインボーナス</li>
-        <li>家具を使って寝る・遊ぶ</li>
       </ul>
     </div>
   </section>
@@ -127,8 +127,8 @@
 <div id="birthModal" class="modal hidden">
   <div class="modalCard birthCard">
     <div class="confetti">✨🎉✨</div>
-    <div id="birthEgg" class="eggArt birthEggArt"><span></span></div>
-    <div id="bornCat" class="catArt bornArt hidden"><div class="tail"></div><div class="face"><i></i><b></b></div></div>
+    <div id="birthEgg" class="birthEgg">🥚</div>
+    <div id="bornCat" class="bornCat hidden">🐱</div>
     <h2 id="birthTitle">ピシッ…！</h2>
     <p id="bornText">たまごが動いているよ…</p>
     <input id="catNameInput" class="hidden" placeholder="名前をつけてね">

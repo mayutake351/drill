@@ -1,6 +1,6 @@
-const SUBJECT_KEY="makopet_subjects_v6";
-const DAILY_KEY="makopet_daily_v6";
-const PET_KEY="makopet_pet_v6";
+const SUBJECT_KEY="makopet_subjects_v7";
+const DAILY_KEY="makopet_daily_v7";
+const PET_KEY="makopet_pet_v7";
 
 const personalities=[
   {id:"genki",name:"元気",lines:["あそぼうにゃ！","今日もやる気いっぱい！","走りたいにゃ〜"]},
@@ -11,13 +11,14 @@ const personalities=[
 ];
 
 const cats=[
-  {id:"white",name:"しろねこ",emoji:"🐱",className:""},
-  {id:"mike",name:"みけねこ",emoji:"🐈",className:"mike"},
-  {id:"black",name:"くろねこ",emoji:"🐈‍⬛",className:"black"},
-  {id:"orange",name:"ちゃとら",emoji:"😺",className:"orange"},
-  {id:"pink",name:"さくらねこ",emoji:"🌸",className:"pink"},
-  {id:"star",name:"ほしねこ",emoji:"⭐",className:"star"},
-  {id:"dino",name:"きょうりゅうねこ",emoji:"🦖",className:"dino"}
+  {id:"white",name:"しろねこ",emoji:"🐱"},
+  {id:"mike",name:"みけねこ",emoji:"🐈"},
+  {id:"black",name:"くろねこ",emoji:"🐈‍⬛"},
+  {id:"smile",name:"にこねこ",emoji:"😺"},
+  {id:"happy",name:"ごきげんねこ",emoji:"😸"},
+  {id:"love",name:"らぶねこ",emoji:"😻"},
+  {id:"surprise",name:"びっくりねこ",emoji:"🙀"},
+  {id:"kiss",name:"おしゃれねこ",emoji:"😽"}
 ];
 
 const shopItems=[
@@ -42,6 +43,7 @@ let birthStep=0;
 function load(k,d){return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function today(){return new Date().toISOString().slice(0,10)}
+function randomOne(arr){return arr[Math.floor(Math.random()*arr.length)]}
 function getSubjects(){return load(SUBJECT_KEY,[])}
 function setSubjects(v){save(SUBJECT_KEY,v)}
 function getDaily(){let d=load(DAILY_KEY,{}); if(!d[today()])d[today()]={}; return d}
@@ -57,7 +59,6 @@ function getPet(){
   return p;
 }
 function setPet(v){save(PET_KEY,v)}
-function randomOne(arr){return arr[Math.floor(Math.random()*arr.length)]}
 
 function showTab(id,btn){
   ["home","manage","shop","dress","book","note"].forEach(x=>document.getElementById(x).classList.add("hidden"));
@@ -131,8 +132,8 @@ function gain(point){
 function startBirth(cat, personality){
   birthStep=0;
   document.getElementById("birthModal").classList.remove("hidden");
-  document.getElementById("birthEgg").classList.remove("hidden","cracking");
-  document.getElementById("bornCat").className="catArt bornArt hidden "+cat.className;
+  document.getElementById("birthEgg").className="birthEgg";
+  document.getElementById("bornCat").classList.add("hidden");
   document.getElementById("catNameInput").classList.add("hidden");
   document.getElementById("catNameInput").value="";
   document.getElementById("birthTitle").textContent="ピシッ…！";
@@ -155,6 +156,7 @@ function nextBirthStep(){
   }
   if(birthStep===1){
     egg.classList.add("hidden");
+    born.textContent=pendingCat.emoji;
     born.classList.remove("hidden");
     document.getElementById("birthTitle").textContent="おめでとう！";
     document.getElementById("bornText").textContent=pendingCat.name+"がうまれたよ！ 性格は「"+p.personality.name+"」";
@@ -237,22 +239,6 @@ function resetToday(){
   }
 }
 
-function makeEgg(exp){
-  const div=document.createElement("div");
-  div.className="eggArt"+(exp>=70?" glow":"");
-  const span=document.createElement("span");
-  span.textContent=exp>=70?"⚡":(exp>=40?"⌁":"");
-  div.appendChild(span);
-  return div;
-}
-
-function makeCat(cat){
-  const div=document.createElement("div");
-  div.className="catArt "+(cat?.className||"");
-  div.innerHTML='<div class="tail"></div><div class="face"><i></i><b></b></div>';
-  return div;
-}
-
 function renderPet(){
   const p=getPet();
   document.getElementById("totalPoints").textContent=p.totalPoints;
@@ -262,13 +248,20 @@ function renderPet(){
   document.getElementById("happy").textContent=p.happy;
   document.getElementById("hunger").textContent=p.hunger;
 
-  const art=document.getElementById("petArt");
-  art.innerHTML="";
+  const emoji=document.getElementById("petEmoji");
   const stage=document.querySelector(".petStage");
   stage.classList.remove("walk");
+  emoji.className="petEmoji";
 
   if(p.hatched&&p.cat){
-    art.appendChild(makeCat(p.cat));
+    let face=p.cat.emoji;
+    if(p.hunger<35) face="😿";
+    else if(p.happy>85) face="😻";
+    else if(p.happy<35) face="🙀";
+    emoji.textContent=face;
+    if(p.hunger<35) emoji.classList.add("hungry");
+    else if(p.happy>85) emoji.classList.add("happy");
+    else emoji.classList.add("sleepy");
     stage.classList.add("walk");
     document.getElementById("crack").textContent="";
     const displayName=p.catName||p.cat.name;
@@ -276,7 +269,8 @@ function renderPet(){
     document.getElementById("mainMsg").innerHTML=displayName+"のおへや<br><small>"+personalityName+"</small>";
     speech(p.happy<40?"さみしかったにゃ…":p.hunger<40?"おなかすいたにゃ…":displayName+"だよ。今日もよろしくにゃ♪");
   }else{
-    art.appendChild(makeEgg(p.exp));
+    emoji.textContent=p.exp>=70?"🥚✨":"🥚";
+    emoji.classList.add("egg");
     document.getElementById("crack").textContent=p.exp>=70?"⚡ ⚡":(p.exp>=40?"⚡":"");
     document.getElementById("mainMsg").innerHTML="ふしぎなたまごから<br>かわいい子がうまれるよ";
   }
