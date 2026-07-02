@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ドリル進捗管理</title>
+  <style>
+    :root{
+      --bg:#fff7fb; --card:#ffffff; --ink:#2f2430; --muted:#766a75;
+      --accent:#ff7db8; --accent2:#8fd3ff; --good:#68c77c; --warn:#ffb347;
+      --line:#f0d9e7;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink);}
+    header{padding:22px 18px 10px;text-align:center}
+    h1{margin:0;font-size:24px}
+    .sub{color:var(--muted);font-size:13px;margin-top:6px}
+    main{max-width:760px;margin:0 auto;padding:12px 14px 40px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 4px 14px rgba(120,60,100,.08)}
+    h2{font-size:18px;margin:0 0 12px}
+    label{display:block;font-size:13px;color:var(--muted);margin:8px 0 4px}
+    input,select,button{font:inherit;border-radius:12px;border:1px solid var(--line);padding:10px;width:100%}
+    input,select{background:#fff}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .row3{display:grid;grid-template-columns:1.3fr .7fr .7fr;gap:8px}
+    button{background:var(--accent);color:white;border:0;font-weight:700;margin-top:10px}
+    button.secondary{background:#f3edf2;color:var(--ink)}
+    button.small{width:auto;padding:7px 10px;margin:0;font-size:13px}
+    .task{display:flex;gap:10px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:14px;margin:8px 0;background:#fff}
+    .task input{width:auto}
+    .task.done{opacity:.55;text-decoration:line-through}
+    .drill{padding:12px;border:1px solid var(--line);border-radius:14px;margin:10px 0;background:#fff}
+    .drillTop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+    .title{font-weight:800}
+    .meta{font-size:13px;color:var(--muted);margin-top:3px}
+    .bar{height:14px;background:#f5e8f0;border-radius:999px;overflow:hidden;margin:10px 0}
+    .fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%}
+    .controls{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .empty{color:var(--muted);font-size:14px;padding:8px}
+    .allGroup{border:1px solid var(--line);border-radius:14px;background:#fff;margin:10px 0;padding:12px}
+    .allGroupHead{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
+    .allItems{display:flex;flex-wrap:wrap;gap:6px}
+    .pageChip{border:1px solid var(--line);border-radius:999px;padding:6px 9px;background:#fffafd;font-size:13px}
+    .pageChip.donePlan{background:#f0fff3;color:#28733a}
+    .pill{display:inline-block;border-radius:999px;padding:4px 9px;background:#fff0f7;color:#a93672;font-size:12px;font-weight:700}
+    .danger{background:#eee;color:#555}
+    footer{text-align:center;color:var(--muted);font-size:12px;margin-top:16px}
+  </style>
+</head>
+<body>
+<header>
+  <h1>📚 ドリル進捗管理</h1>
+  <div class="sub">今日やること・進み具合・残りページを見える化</div>
+</header>
+<main>
+  <section class="card">
+    <h2>今日やること</h2>
+    <div id="todayTasks"></div>
+    <button class="secondary" onclick="resetToday()">今日のチェックをリセット</button>
+  </section>
+
+  <section class="card">
+    <h2>全やること一覧</h2>
+    <div class="sub" style="text-align:left;margin-bottom:8px">未完了ページを、1日ページ数ごとに区切って表示</div>
+    <div id="allTasks"></div>
+  </section>
+
+  <section class="card">
+    <h2>ドリルを追加</h2>
+    <label>ドリル名</label>
+    <input id="name" placeholder="例：算数ラボ、Z会 国語、漢字ドリル">
+    <div class="row3">
+      <div>
+        <label>総ページ</label>
+        <input id="total" type="number" min="1" placeholder="60">
+      </div>
+      <div>
+        <label>現在ページ</label>
+        <input id="current" type="number" min="0" placeholder="0">
+      </div>
+      <div>
+        <label>1日ページ</label>
+        <input id="daily" type="number" min="1" placeholder="2">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>締切日</label>
+        <input id="deadline" type="date">
+      </div>
+      <div>
+        <label>優先度</label>
+        <select id="priority">
+          <option>高</option><option selected>中</option><option>低</option>
+        </select>
+      </div>
+    </div>
+    <button onclick="addDrill()">追加する</button>
+  </section>
+
+  <section class="card">
+    <h2>進捗</h2>
+    <div id="drills"></div>
+  </section>
+
+  <footer>データはこの端末のブラウザに保存されます。まずは家庭内用ミニアプリ。</footer>
+</main>
+
+<script>
+const KEY = "drill-progress-v1";
+const DONEKEY = "drill-progress-done-v1";
+
+function load(){ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+function save(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
+function loadDone(){ return JSON.parse(localStorage.getItem(DONEKEY) || "{}"); }
+function saveDone(data){ localStorage.setItem(DONEKEY, JSON.stringify(data)); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function pct(d){ return Math.min(100, Math.round((Number(d.current||0) / Number(d.total||1))*100)); }
+
+function addDrill(){
+  const name = document.getElementById("name").value.trim();
+  const total = Number(document.getElementById("total").value);
+  const current = Number(document.getElementById("current").value || 0);
+  const daily = Number(document.getElementById("daily").value || 1);
+  const deadline = document.getElementById("deadline").value;
+  const priority = document.getElementById("priority").value;
+  if(!name || !total){ alert("ドリル名と総ページを入れてね"); return; }
+  const data = load();
+  data.push({id:Date.now(), name,total,current,daily,deadline,priority});
+  save(data);
+  ["name","total","current","daily","deadline"].forEach(id=>document.getElementById(id).value="");
+  render();
+}
+
+function updateCurrent(id, delta){
+  const data = load().map(d => {
+    if(d.id === id){
+      d.current = Math.max(0, Math.min(Number(d.total), Number(d.current)+delta));
+    }
+    return d;
+  });
+  save(data); render();
+}
+
+function setCurrent(id){
+  const val = prompt("現在ページを入力");
+  if(val===null) return;
+  const data = load().map(d => {
+    if(d.id === id) d.current = Math.max(0, Math.min(Number(d.total), Number(val||0)));
+    return d;
+  });
+  save(data); render();
+}
+
+function removeDrill(id){
+  if(!confirm("このドリルを削除する？")) return;
+  save(load().filter(d=>d.id!==id));
+  render();
+}
+
+function taskRange(d){
+  const start = Number(d.current)+1;
+  const end = Math.min(Number(d.total), Number(d.current)+Number(d.daily||1));
+  if(start > Number(d.total)) return "完了！";
+  return `P${start}〜${end}`;
+}
+
+function toggleDone(id){
+  const done = loadDone();
+  const key = today()+"-"+id;
+  done[key] = !done[key];
+  saveDone(done);
+  render();
+}
+
+function resetToday(){
+  const done = loadDone();
+  Object.keys(done).forEach(k=>{ if(k.startsWith(today()+"-")) delete done[k]; });
+  saveDone(done); render();
+}
+
+function render(){
+  const data = load().sort((a,b)=>{
+    const pr = {高:0,中:1,低:2};
+    return pr[a.priority]-pr[b.priority] || (a.deadline||"9999").localeCompare(b.deadline||"9999");
+  });
+  const done = loadDone();
+  const taskBox = document.getElementById("todayTasks");
+  const active = data.filter(d=>Number(d.current)<Number(d.total));
+  taskBox.innerHTML = active.length ? "" : '<div class="empty">今日のタスクは空。ドリルを追加してね。</div>';
+  active.forEach(d=>{
+    const key = today()+"-"+d.id;
+    const div = document.createElement("div");
+    div.className = "task" + (done[key] ? " done" : "");
+    div.innerHTML = `<input type="checkbox" ${done[key]?"checked":""} onchange="toggleDone(${d.id})">
+      <div><b>${d.name}</b><br><span class="meta">${taskRange(d)}　<span class="pill">優先度${d.priority}</span></span></div>`;
+    taskBox.appendChild(div);
+  });
+
+  const allBox = document.getElementById("allTasks");
+  allBox.innerHTML = active.length ? "" : '<div class="empty">未完了のやることはありません。えらい、ほぼ神。</div>';
+  active.forEach(d=>{
+    const group = document.createElement("div");
+    group.className = "allGroup";
+    const chunks = [];
+    for(let s = Number(d.current)+1; s <= Number(d.total); s += Number(d.daily||1)){
+      const e = Math.min(Number(d.total), s + Number(d.daily||1) - 1);
+      chunks.push(`P${s}${e!==s ? "〜"+e : ""}`);
+    }
+    group.innerHTML = `
+      <div class="allGroupHead">
+        <div>
+          <div class="title">${d.name}</div>
+          <div class="meta">残り${Math.max(0, Number(d.total)-Number(d.current))}ページ・1回${Number(d.daily||1)}ページ</div>
+        </div>
+        <span class="pill">優先度${d.priority}</span>
+      </div>
+      <div class="allItems">${chunks.map((c,i)=>`<span class="pageChip ${i===0?"donePlan":""}">${i===0?"今日 ":""}${c}</span>`).join("")}</div>
+    `;
+    allBox.appendChild(group);
+  });
+
+  const list = document.getElementById("drills");
+  list.innerHTML = data.length ? "" : '<div class="empty">まだドリルがありません。</div>';
+  data.forEach(d=>{
+    const percent = pct(d);
+    const remain = Math.max(0, Number(d.total)-Number(d.current));
+    const div = document.createElement("div");
+    div.className = "drill";
+    div.innerHTML = `
+      <div class="drillTop">
+        <div>
+          <div class="title">${d.name}</div>
+          <div class="meta">${d.current}/${d.total}ページ・残り${remain}ページ ${d.deadline ? "・締切 "+d.deadline : ""}</div>
+        </div>
+        <span class="pill">${percent}%</span>
+      </div>
+      <div class="bar"><div class="fill" style="width:${percent}%"></div></div>
+      <div class="controls">
+        <button class="small" onclick="updateCurrent(${d.id},1)">+1P</button>
+        <button class="small" onclick="updateCurrent(${d.id},${Number(d.daily||1)})">今日分完了</button>
+        <button class="small secondary" onclick="setCurrent(${d.id})">ページ修正</button>
+        <button class="small danger" onclick="removeDrill(${d.id})">削除</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+render();
+</script>
+</body>
+</html>
