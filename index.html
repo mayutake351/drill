@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット Ver2.1</title>
+<title>まこペット Ver2.2</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main class="app">
   <div class="game">
     <img src="makopet_art_ui.png" class="bg" alt="まこペット">
+
+    <div id="sparkLayer" class="sparkLayer"></div>
 
     <div class="topScore">
       <div>今日</div>
@@ -22,9 +24,8 @@
       <div class="meter"><span id="rewardFill"></span></div>
     </div>
 
-    <div id="pet" class="pet" onclick="petCat()">🐱</div>
-    <div id="heartFx" class="heartFx hidden">💕</div>
     <div id="bubble" class="bubble">今日も会えて<br>うれしいにゃ♡</div>
+    <div id="heartFx" class="heartFx hidden">💕</div>
 
     <section class="taskPanel">
       <h2>きょうのやること</h2>

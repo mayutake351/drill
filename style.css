@@ -46,7 +46,7 @@ body{
 }
 .topScore strong{
   color:#ff6386;
-  font-size:clamp(28px,4vw,56px);
+  font-size:clamp(22px,3.2vw,44px);
   line-height:1;
   text-shadow:0 2px #fff;
 }
@@ -60,9 +60,7 @@ body{
   font-weight:900;
   font-size:clamp(11px,1.35vw,20px);
 }
-.rewardTitle{
-  color:#ff699b;
-}
+.rewardTitle{color:#ff699b}
 .meter{
   width:78%;
   height:18%;
@@ -77,44 +75,27 @@ body{
   height:100%;
   width:0%;
   background:linear-gradient(90deg,#ff5fa1,#ffd15f);
+  transition:width .45s ease;
 }
-.pet{
+.bubble{
   position:absolute;
-  left:44%;
-  top:42%;
-  transform:translate(-50%,-50%);
-  font-size:clamp(54px,7vw,110px);
-  line-height:1;
-  filter:drop-shadow(0 8px 10px rgba(80,40,60,.20));
-  cursor:pointer;
-  animation:floatPet 2.6s infinite ease-in-out;
-}
-.pet.small{
-  font-size:clamp(42px,5.5vw,84px);
-}
-.pet.happy{animation:happy .55s 4 alternate}
-.pet.eat{animation:eat .35s 6}
-.pet.sleep{animation:sleep 2.5s infinite}
-@keyframes floatPet{
-  0%,100%{transform:translate(-50%,-50%) translateY(0)}
-  50%{transform:translate(-50%,-50%) translateY(-8px)}
-}
-@keyframes happy{
-  from{transform:translate(-50%,-50%) rotate(-5deg) scale(1.08)}
-  to{transform:translate(-50%,-50%) rotate(5deg) scale(1.18)}
-}
-@keyframes eat{
-  0%,100%{transform:translate(-50%,-50%) scale(1)}
-  50%{transform:translate(-50%,-50%) scale(.92)}
-}
-@keyframes sleep{
-  0%,100%{transform:translate(-50%,-50%) translateY(0) scale(.96)}
-  50%{transform:translate(-50%,-50%) translateY(5px) scale(.90)}
+  left:43%;
+  top:18%;
+  width:23%;
+  min-height:9%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#7b4435;
+  font-weight:900;
+  font-size:clamp(12px,1.55vw,23px);
+  pointer-events:none;
 }
 .heartFx{
   position:absolute;
-  left:48%;
-  top:31%;
+  left:50%;
+  top:33%;
   font-size:clamp(28px,4vw,60px);
   animation:heartUp 1s forwards;
   pointer-events:none;
@@ -123,20 +104,21 @@ body{
   from{opacity:1;transform:translateY(0) scale(1)}
   to{opacity:0;transform:translateY(-70px) scale(1.4)}
 }
-.bubble{
+.sparkLayer{
   position:absolute;
-  left:36.5%;
-  top:18.5%;
-  width:22%;
-  min-height:9%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  color:#7b4435;
-  font-weight:900;
-  font-size:clamp(12px,1.6vw,24px);
+  inset:0;
   pointer-events:none;
+  z-index:5;
+}
+.spark{
+  position:absolute;
+  font-size:clamp(22px,3vw,44px);
+  animation:sparkPop .9s forwards;
+}
+@keyframes sparkPop{
+  0%{opacity:0;transform:scale(.4) translateY(0)}
+  25%{opacity:1}
+  100%{opacity:0;transform:scale(1.4) translateY(-55px)}
 }
 .taskPanel{
   position:absolute;
@@ -153,16 +135,19 @@ body{
 }
 .task{
   display:grid;
-  grid-template-columns:1.1fr 1.55fr;
+  grid-template-columns:1.05fr 1.45fr auto;
   align-items:center;
   gap:5px;
-  padding:2.2% 3%;
+  padding:2.2% 2%;
   margin:2.2% 0;
   border-radius:18px;
-  background:rgba(255,255,255,.78);
-  border:2px solid rgba(255,170,190,.48);
+  background:rgba(255,255,255,.82);
+  border:2px solid rgba(255,170,190,.52);
   font-weight:900;
-  font-size:clamp(11px,1.25vw,19px);
+  font-size:clamp(10px,1.15vw,18px);
+}
+.taskName{
+  cursor:pointer;
 }
 .stars{
   display:grid;
@@ -181,6 +166,16 @@ body{
 .stars button.on{
   background:#ffdf70;
   color:#fff;
+}
+.delBtn{
+  width:1.8em;
+  height:1.8em;
+  border:0;
+  border-radius:999px;
+  background:#ffe7ef;
+  color:#d84e91;
+  font-weight:900;
+  cursor:pointer;
 }
 .addBtn{
   width:100%;
@@ -202,13 +197,20 @@ body{
 }
 .actionPanel button{
   border:0;
-  background:rgba(255,255,255,.78);
+  background:rgba(255,255,255,.82);
   color:#7b4435;
   border-radius:24px;
   padding:10%;
   font-weight:900;
-  font-size:clamp(11px,1.35vw,20px);
+  font-size:clamp(11px,1.25vw,19px);
   cursor:pointer;
+  transition:transform .15s ease, background .15s ease;
+}
+.actionPanel button:active,
+.bottomNav button:active,
+.addBtn:active,
+.stars button:active{
+  transform:scale(.94);
 }
 .statusPanel{
   position:absolute;
@@ -221,7 +223,7 @@ body{
   font-size:clamp(11px,1.3vw,19px);
 }
 .statusPanel div{
-  background:rgba(255,255,255,.72);
+  background:rgba(255,255,255,.76);
   border-radius:16px;
   padding:6%;
 }
@@ -255,7 +257,7 @@ body{
 .bottomNav button{
   flex:1;
   border:0;
-  background:rgba(255,255,255,.68);
+  background:rgba(255,255,255,.78);
   color:#7b4435;
   border-radius:22px;
   padding:1.1% .5%;

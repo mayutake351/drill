@@ -1,5 +1,5 @@
-const TASK_KEY = "makopet_v21_tasks";
-const STATE_KEY = "makopet_v21_state";
+const TASK_KEY = "makopet_v22_tasks";
+const STATE_KEY = "makopet_v22_state";
 
 const defaultTasks = [
   { id: 1, name: "📗 こくご", point: 0 },
@@ -53,10 +53,6 @@ function render(){
   document.getElementById("hunger").textContent = state.hunger;
   document.getElementById("streak").textContent = state.streak;
 
-  const pet = document.getElementById("pet");
-  pet.textContent = state.hunger < 30 ? "😿" : (state.friend > 80 ? "😻" : state.currentCat);
-  pet.classList.add("small");
-
   const next = nextReward();
   document.getElementById("nextReward").textContent = next.text;
   document.getElementById("rewardFill").style.width = Math.min(100, state.todayPoints / next.point * 100) + "%";
@@ -67,10 +63,11 @@ function render(){
     const div = document.createElement("div");
     div.className = "task";
     div.innerHTML = `
-      <div>${task.name}</div>
+      <div class="taskName" onclick="editTask(${task.id})">${task.name}</div>
       <div class="stars">
         ${[0,1,2,3].map(n => `<button class="${task.point===n?'on':''}" onclick="setPoint(${task.id},${n})">${n}</button>`).join("")}
       </div>
+      <button class="delBtn" onclick="deleteTask(${task.id})">×</button>
     `;
     taskBox.appendChild(div);
   });
@@ -96,8 +93,12 @@ function setPoint(id, point){
     state.todayPoints += diff;
     state.totalPoints += diff;
     state.friend = Math.min(100, state.friend + diff * 2);
-    say("がんばったね！<br>えらいにゃ〜♡");
-    animatePet("happy");
+    if(point === 3){
+      say("すごいにゃ！<br>3ポイント達成✨");
+      sparkle(38, 34, "✨");
+    }else{
+      say("がんばったね！<br>えらいにゃ〜♡");
+    }
     heart();
     checkMilestone();
   }else{
@@ -112,20 +113,40 @@ function addTask(){
   if(!name) return;
   tasks.push({ id: Date.now(), name: "✨ " + name, point: 0 });
   say("追加したにゃ！");
+  sparkle(18, 66, "✨");
+  render();
+}
+
+function editTask(id){
+  const task = tasks.find(t => t.id === id);
+  if(!task) return;
+  const name = prompt("名前を変更する？", task.name);
+  if(!name) return;
+  task.name = name;
+  say("名前を変えたにゃ");
+  render();
+}
+
+function deleteTask(id){
+  const task = tasks.find(t => t.id === id);
+  if(!task) return;
+  if(!confirm(task.name + " を削除する？")) return;
+  tasks = tasks.filter(t => t.id !== id);
+  say("削除したにゃ");
   render();
 }
 
 function feed(){
   if(state.todayPoints < 10){
     say("10ポイントで<br>ごはんが食べられるにゃ");
-    animatePet("eat");
+    sparkle(49, 38, "🍎");
     return;
   }
   state.todayPoints -= 10;
   state.hunger = Math.min(100, state.hunger + 25);
   state.friend = Math.min(100, state.friend + 5);
   say("もぐもぐ…<br>おいしいにゃ♡");
-  animatePet("eat");
+  sparkle(47, 38, "🍎");
   heart();
   render();
 }
@@ -133,12 +154,13 @@ function feed(){
 function present(){
   if(state.todayPoints < 30){
     say("30ポイントで<br>プレゼントが届くにゃ🎁");
+    sparkle(60, 35, "🎁");
     return;
   }
   state.todayPoints -= 30;
   state.friend = Math.min(100, state.friend + 12);
   say("プレゼント<br>うれしいにゃ🎁");
-  animatePet("happy");
+  sparkle(48, 35, "🎁");
   heart();
   render();
 }
@@ -146,6 +168,7 @@ function present(){
 function newEgg(){
   if(state.todayPoints < 100){
     say("100ポイントで<br>新しいたまご発見にゃ🥚");
+    sparkle(58, 32, "🥚");
     return;
   }
   state.todayPoints -= 100;
@@ -154,34 +177,12 @@ function newEgg(){
   state.currentCat = cat;
   if(!state.cats.includes(cat)) state.cats.push(cat);
   say("新しい子に<br>出会えたにゃ！🥚");
-  animatePet("happy");
-  heart();
-  render();
-}
-
-function petCat(){
-  state.friend = Math.min(100, state.friend + 1);
-  const lines = [
-    "なでてくれて<br>うれしいにゃ♡",
-    "今日も会えて<br>うれしいにゃ",
-    "いっしょに<br>がんばろうにゃ",
-    "にゃ〜♪"
-  ];
-  say(lines[Math.floor(Math.random()*lines.length)]);
-  animatePet("happy");
+  sparkle(48, 35, "✨");
   heart();
   render();
 }
 
 function say(text){ document.getElementById("bubble").innerHTML = text; }
-
-function animatePet(cls){
-  const pet = document.getElementById("pet");
-  pet.classList.remove("happy","eat","sleep");
-  void pet.offsetWidth;
-  pet.classList.add(cls);
-  setTimeout(() => pet.classList.remove(cls), 1600);
-}
 
 function heart(){
   const fx = document.getElementById("heartFx");
@@ -190,10 +191,32 @@ function heart(){
   setTimeout(() => fx.classList.add("hidden"), 950);
 }
 
+function sparkle(x, y, char="✨"){
+  const layer = document.getElementById("sparkLayer");
+  for(let i=0;i<5;i++){
+    const s = document.createElement("div");
+    s.className = "spark";
+    s.textContent = char;
+    s.style.left = (x + (Math.random()*10-5)) + "%";
+    s.style.top = (y + (Math.random()*10-5)) + "%";
+    layer.appendChild(s);
+    setTimeout(()=>s.remove(), 950);
+  }
+}
+
 function checkMilestone(){
-  if(state.todayPoints === 10) say("🍎 ごはんゲット！<br>すごいにゃ♡");
-  if(state.todayPoints === 30) say("🎁 プレゼントまで<br>到達したにゃ！");
-  if(state.todayPoints === 100) say("🥚 新しいたまごを<br>見つけたにゃ！");
+  if(state.todayPoints === 10) {
+    say("🍎 ごはんゲット！<br>すごいにゃ♡");
+    sparkle(47, 35, "🍎");
+  }
+  if(state.todayPoints === 30) {
+    say("🎁 プレゼントまで<br>到達したにゃ！");
+    sparkle(47, 35, "🎁");
+  }
+  if(state.todayPoints === 100) {
+    say("🥚 新しいたまごを<br>見つけたにゃ！");
+    sparkle(47, 35, "🥚");
+  }
 }
 
 function resetData(){
