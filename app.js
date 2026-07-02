@@ -1,6 +1,14 @@
-const SUBJECT_KEY="makopet_subjects_v5";
-const DAILY_KEY="makopet_daily_v5";
-const PET_KEY="makopet_pet_v5";
+const SUBJECT_KEY="makopet_subjects_v6";
+const DAILY_KEY="makopet_daily_v6";
+const PET_KEY="makopet_pet_v6";
+
+const personalities=[
+  {id:"genki",name:"元気",lines:["あそぼうにゃ！","今日もやる気いっぱい！","走りたいにゃ〜"]},
+  {id:"amae",name:"甘えん坊",lines:["なでてほしいにゃ","会いにきてくれてうれしいにゃ","そばにいてにゃ"]},
+  {id:"kuishinbo",name:"食いしん坊",lines:["おなかすいたにゃ","ごはんまだかにゃ？","もぐもぐしたいにゃ"]},
+  {id:"nonbiri",name:"のんびり",lines:["ゆっくりしようにゃ","ねむいにゃ…","ぽかぽかだにゃ"]},
+  {id:"kashikoi",name:"かしこい",lines:["勉強えらいにゃ","今日も成長したにゃ","いいペースだにゃ"]}
+];
 
 const cats=[
   {id:"white",name:"しろねこ",emoji:"🐱",className:""},
@@ -39,7 +47,7 @@ function setSubjects(v){save(SUBJECT_KEY,v)}
 function getDaily(){let d=load(DAILY_KEY,{}); if(!d[today()])d[today()]={}; return d}
 function setDaily(v){save(DAILY_KEY,v)}
 function getPet(){
-  let p=load(PET_KEY,{exp:0,totalPoints:0,coins:0,hatched:false,cat:null,catName:"",book:[],items:[],happy:100,hunger:100,last:today()});
+  let p=load(PET_KEY,{exp:0,totalPoints:0,coins:0,hatched:false,cat:null,catName:"",personality:null,book:[],items:[],happy:100,hunger:100,last:today()});
   if(p.last!==today()){
     p.happy=Math.max(0,p.happy-15);
     p.hunger=Math.max(0,p.hunger-20);
@@ -49,6 +57,7 @@ function getPet(){
   return p;
 }
 function setPet(v){save(PET_KEY,v)}
+function randomOne(arr){return arr[Math.floor(Math.random()*arr.length)]}
 
 function showTab(id,btn){
   ["home","manage","shop","dress","book","note"].forEach(x=>document.getElementById(x).classList.add("hidden"));
@@ -106,11 +115,12 @@ function gain(point){
   while(p.exp>=100){
     p.exp-=100;
     if(!p.hatched){
-      const cat=cats[Math.floor(Math.random()*cats.length)];
-      p.hatched=true; p.cat=cat; p.catName="";
+      const cat=randomOne(cats);
+      const personality=randomOne(personalities);
+      p.hatched=true; p.cat=cat; p.catName=""; p.personality=personality;
       if(!p.book.find(x=>x.id===cat.id))p.book.push(cat);
       pendingCat=cat;
-      startBirth(cat);
+      startBirth(cat, personality);
     }else{
       p.coins+=5;
     }
@@ -118,7 +128,7 @@ function gain(point){
   setPet(p);
 }
 
-function startBirth(cat){
+function startBirth(cat, personality){
   birthStep=0;
   document.getElementById("birthModal").classList.remove("hidden");
   document.getElementById("birthEgg").classList.remove("hidden","cracking");
@@ -134,6 +144,7 @@ function nextBirthStep(){
   const egg=document.getElementById("birthEgg");
   const born=document.getElementById("bornCat");
   const input=document.getElementById("catNameInput");
+  const p=getPet();
 
   if(birthStep===0){
     egg.classList.add("cracking");
@@ -146,7 +157,7 @@ function nextBirthStep(){
     egg.classList.add("hidden");
     born.classList.remove("hidden");
     document.getElementById("birthTitle").textContent="おめでとう！";
-    document.getElementById("bornText").textContent=pendingCat.name+"がうまれたよ！";
+    document.getElementById("bornText").textContent=pendingCat.name+"がうまれたよ！ 性格は「"+p.personality.name+"」";
     input.classList.remove("hidden");
     document.getElementById("birthButton").textContent="名前を決める";
     birthStep++;
@@ -154,7 +165,6 @@ function nextBirthStep(){
   }
   const name=input.value.trim();
   if(name){
-    const p=getPet();
     p.catName=name;
     setPet(p);
   }
@@ -167,12 +177,20 @@ function closeBirthModal(){
   render();
 }
 
+function showMood(text){
+  const b=document.getElementById("moodBubble");
+  b.textContent=text;
+  b.classList.remove("hidden");
+  setTimeout(()=>b.classList.add("hidden"),1600);
+}
+
 function useFood(){
   const p=getPet();
-  if(p.totalPoints<10){speech("あと少しでごはんをあげられるよ♪");return}
+  if(p.totalPoints<10){speech("あと少しでごはんをあげられるよ♪");showMood("おなかすいた");return}
   p.totalPoints-=10; p.coins+=3; p.exp+=15; p.hunger=Math.min(100,p.hunger+35);
   setPet(p);
   speech(p.hatched?"もぐもぐ。おいしいにゃ！":"たまごがぽかぽかしてきたよ！");
+  showMood("もぐもぐ");
   render();
 }
 
@@ -182,6 +200,7 @@ function play(){
   p.hunger=Math.max(0,p.hunger-5);
   setPet(p);
   speech(p.hatched?"いっぱい遊んだにゃ！":"たまごがうれしそうに揺れた！");
+  showMood("たのしい!");
   render();
 }
 
@@ -194,10 +213,13 @@ function tapPet(){
   stage.classList.add("bump");
   const p=getPet();
   const displayName=p.catName||p.cat?.name||"";
+  const personality=p.personality || personalities[0];
   const phrases=p.hatched
-    ? ["なでなでうれしいにゃ","おかえり！",displayName+"に会いにきてくれてうれしいにゃ","遊ぼうにゃ♪"]
+    ? personality.lines.concat(["なでなでうれしいにゃ","おかえり！",displayName+"に会いにきてくれてうれしいにゃ"])
     : ["ぽかぽか…♪","なにが生まれるかな？","もう少しでヒビが入りそう！"];
-  speech(phrases[Math.floor(Math.random()*phrases.length)]);
+  const line=randomOne(phrases);
+  speech(line);
+  showMood(line.length>7 ? "にゃ♪" : line);
 }
 
 function buyItem(id,type){
@@ -227,7 +249,7 @@ function makeEgg(exp){
 function makeCat(cat){
   const div=document.createElement("div");
   div.className="catArt "+(cat?.className||"");
-  div.innerHTML='<div class="face"><i></i><b></b></div>';
+  div.innerHTML='<div class="tail"></div><div class="face"><i></i><b></b></div>';
   return div;
 }
 
@@ -250,7 +272,8 @@ function renderPet(){
     stage.classList.add("walk");
     document.getElementById("crack").textContent="";
     const displayName=p.catName||p.cat.name;
-    document.getElementById("mainMsg").innerHTML=displayName+"のおへや";
+    const personalityName=p.personality?.name ? "（"+p.personality.name+"）" : "";
+    document.getElementById("mainMsg").innerHTML=displayName+"のおへや<br><small>"+personalityName+"</small>";
     speech(p.happy<40?"さみしかったにゃ…":p.hunger<40?"おなかすいたにゃ…":displayName+"だよ。今日もよろしくにゃ♪");
   }else{
     art.appendChild(makeEgg(p.exp));
