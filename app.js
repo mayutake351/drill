@@ -1,362 +1,185 @@
-const SUBJECT_KEY="makopet_subjects_v7";
-const DAILY_KEY="makopet_daily_v7";
-const PET_KEY="makopet_pet_v7";
+const TASK_KEY = "makopet_art_tasks_v1";
+const STATE_KEY = "makopet_art_state_v1";
 
-const personalities=[
-  {id:"genki",name:"元気",lines:["あそぼうにゃ！","今日もやる気いっぱい！","走りたいにゃ〜"]},
-  {id:"amae",name:"甘えん坊",lines:["なでてほしいにゃ","会いにきてくれてうれしいにゃ","そばにいてにゃ"]},
-  {id:"kuishinbo",name:"食いしん坊",lines:["おなかすいたにゃ","ごはんまだかにゃ？","もぐもぐしたいにゃ"]},
-  {id:"nonbiri",name:"のんびり",lines:["ゆっくりしようにゃ","ねむいにゃ…","ぽかぽかだにゃ"]},
-  {id:"kashikoi",name:"かしこい",lines:["勉強えらいにゃ","今日も成長したにゃ","いいペースだにゃ"]}
+const defaultTasks = [
+  { id: 1, name: "📗 こくご", point: 0 },
+  { id: 2, name: "🔢 さんすう", point: 0 },
+  { id: 3, name: "漢字ドリル", point: 0 },
+  { id: 4, name: "ABC えいご", point: 0 },
+  { id: 5, name: "👕 きがえ", point: 0 },
+  { id: 6, name: "🪥 はみがき", point: 0 },
 ];
 
-const cats=[
-  {id:"white",name:"しろねこ",emoji:"🐱"},
-  {id:"mike",name:"みけねこ",emoji:"🐈"},
-  {id:"black",name:"くろねこ",emoji:"🐈‍⬛"},
-  {id:"smile",name:"にこねこ",emoji:"😺"},
-  {id:"happy",name:"ごきげんねこ",emoji:"😸"},
-  {id:"love",name:"らぶねこ",emoji:"😻"},
-  {id:"surprise",name:"びっくりねこ",emoji:"🙀"},
-  {id:"kiss",name:"おしゃれねこ",emoji:"😽"}
-];
+function load(key, def){
+  try { return JSON.parse(localStorage.getItem(key)) ?? def; }
+  catch { return def; }
+}
+function save(key, value){
+  localStorage.setItem(key, JSON.stringify(value));
+}
 
-const shopItems=[
-  {id:"bed",emoji:"🛏",name:"ふかふかベッド",price:30,cls:"item-bed"},
-  {id:"ball",emoji:"🧶",name:"毛糸ボール",price:20,cls:"item-ball"},
-  {id:"tower",emoji:"🏰",name:"キャットタワー",price:80,cls:"item-tower"},
-  {id:"plant",emoji:"🪴",name:"観葉植物",price:40,cls:"item-plant"},
-  {id:"sofa",emoji:"🛋",name:"ソファ",price:70,cls:"item-sofa"},
-  {id:"toy",emoji:"🧸",name:"ぬいぐるみ",price:50,cls:"item-toy"}
-];
+let tasks = load(TASK_KEY, defaultTasks);
+let state = load(STATE_KEY, {
+  points: 0,
+  friend: 80,
+  hunger: 70,
+  energy: 90,
+  sleepy: 40,
+  cat: "🐱"
+});
 
-const dressItems=[
-  {id:"ribbon",emoji:"🎀",name:"ピンクリボン",price:40},
-  {id:"hat",emoji:"👒",name:"おでかけ帽子",price:60},
-  {id:"crown",emoji:"👑",name:"王冠",price:120},
-  {id:"wing",emoji:"🪽",name:"天使の羽",price:150}
-];
+function render(){
+  document.getElementById("points").textContent = state.points;
+  document.getElementById("points2").textContent = state.points;
+  document.getElementById("friend").textContent = state.friend;
+  document.getElementById("hunger").textContent = state.hunger;
+  document.getElementById("energy").textContent = state.energy;
+  document.getElementById("sleepy").textContent = state.sleepy;
+  document.getElementById("foodFill").style.width = Math.min(100, state.points * 10) + "%";
 
-let pendingCat=null;
-let birthStep=0;
+  const cat = document.getElementById("cat");
+  cat.textContent = state.cat;
+  cat.className = "cat";
+  if(state.hunger < 35) cat.textContent = "😿";
+  else if(state.friend > 90) cat.textContent = "😻";
 
-function load(k,d){return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}
-function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
-function today(){return new Date().toISOString().slice(0,10)}
-function randomOne(arr){return arr[Math.floor(Math.random()*arr.length)]}
-function getSubjects(){return load(SUBJECT_KEY,[])}
-function setSubjects(v){save(SUBJECT_KEY,v)}
-function getDaily(){let d=load(DAILY_KEY,{}); if(!d[today()])d[today()]={}; return d}
-function setDaily(v){save(DAILY_KEY,v)}
-function getPet(){
-  let p=load(PET_KEY,{exp:0,totalPoints:0,coins:0,hatched:false,cat:null,catName:"",personality:null,book:[],items:[],happy:100,hunger:100,last:today()});
-  if(p.last!==today()){
-    p.happy=Math.max(0,p.happy-15);
-    p.hunger=Math.max(0,p.hunger-20);
-    p.last=today();
-    save(PET_KEY,p);
+  const box = document.getElementById("tasks");
+  box.innerHTML = "";
+  tasks.forEach(task => {
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `
+      <div>${task.name}</div>
+      <div class="stars">
+        ${[0,1,2,3].map(n => `<button class="${task.point===n?'on':''}" onclick="setTaskPoint(${task.id},${n})">${n}</button>`).join("")}
+      </div>
+    `;
+    box.appendChild(div);
+  });
+
+  save(TASK_KEY, tasks);
+  save(STATE_KEY, state);
+}
+
+function setTaskPoint(id, point){
+  const task = tasks.find(t => t.id === id);
+  if(!task) return;
+  const diff = point - task.point;
+  task.point = point;
+
+  if(diff > 0){
+    state.points += diff;
+    state.friend = Math.min(100, state.friend + diff * 2);
+    state.energy = Math.min(100, state.energy + diff);
+    say("がんばったね！<br>えらいにゃ〜♡");
+    animateCat("happy");
+  } else {
+    say("記録を直したにゃ");
   }
-  return p;
-}
-function setPet(v){save(PET_KEY,v)}
-
-function showTab(id,btn){
-  ["home","manage","shop","dress","book","note"].forEach(x=>document.getElementById(x).classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
   render();
 }
 
-function addDefaultSubjects(){
-  const s=getSubjects();
-  [
-    {id:Date.now()+1,name:"Z会 国語",goal:"2ページ"},
-    {id:Date.now()+2,name:"算数ラボ",goal:"1ページ"},
-    {id:Date.now()+3,name:"漢字ドリル",goal:"1ページ"}
-  ].forEach(d=>{if(!s.find(x=>x.name===d.name))s.push(d)});
-  setSubjects(s); render();
-}
-
-function addSubject(){
-  const name=document.getElementById("subjectName").value.trim();
-  const goal=document.getElementById("subjectGoal").value.trim();
-  if(!name){alert("科目・教材名を入れてね");return}
-  const s=getSubjects();
-  s.push({id:Date.now(),name,goal:goal||"今日の目標"});
-  setSubjects(s);
-  document.getElementById("subjectName").value="";
-  document.getElementById("subjectGoal").value="";
+function addTask(){
+  const name = prompt("追加する科目ややることは？\n例：読書、ピアノ、お手伝い");
+  if(!name) return;
+  tasks.push({ id: Date.now(), name: "✨ " + name, point: 0 });
+  say("新しいやることを追加したにゃ！");
   render();
 }
 
-function removeSubject(id){
-  if(confirm("この科目を削除する？")){
-    setSubjects(getSubjects().filter(s=>s.id!==id));
+function feedCat(){
+  if(state.points < 10){
+    say("10ポイントたまると<br>ごはんが食べられるにゃ");
+    animateCat("hungry");
+    return;
+  }
+  state.points -= 10;
+  state.hunger = Math.min(100, state.hunger + 20);
+  state.friend = Math.min(100, state.friend + 5);
+  say("もぐもぐ…<br>おいしいにゃ♡");
+  animateCat("eat");
+  render();
+}
+
+function buyFurniture(){
+  if(state.points < 20){
+    say("20ポイントで<br>おへやをかわいくできるにゃ");
+    return;
+  }
+  state.points -= 20;
+  say("おへやが少し<br>かわいくなったにゃ✨");
+  render();
+}
+
+function dressCat(){
+  if(state.points < 15){
+    say("15ポイントで<br>おようふくがもらえるにゃ");
+    return;
+  }
+  state.points -= 15;
+  state.friend = Math.min(100, state.friend + 8);
+  say("おしゃれしたにゃ🎀");
+  animateCat("happy");
+  render();
+}
+
+function showBook(){
+  alert("ずかん\n\n🐱 まこねこ\n😻 なかよしねこ\n😿 おなかすいたねこ\n\nこれから増えるよ！");
+}
+
+function gachaEgg(){
+  if(state.points < 30){
+    say("30ポイントで<br>たまごを見にいけるにゃ");
+    return;
+  }
+  state.points -= 30;
+  const cats = ["🐱","😺","😸","😻","🐈","🐈‍⬛"];
+  state.cat = cats[Math.floor(Math.random()*cats.length)];
+  say("新しい子に会えたにゃ！");
+  animateCat("happy");
+  render();
+}
+
+function resetAll(){
+  if(confirm("データをリセットする？")){
+    localStorage.removeItem(TASK_KEY);
+    localStorage.removeItem(STATE_KEY);
+    tasks = JSON.parse(JSON.stringify(defaultTasks));
+    state = {points:0,friend:80,hunger:70,energy:90,sleepy:40,cat:"🐱"};
     render();
   }
 }
 
-function setPoint(id,point){
-  const d=getDaily();
-  const old=d[today()][id]||0;
-  d[today()][id]=point;
-  setDaily(d);
-  const diff=point-old;
-  if(diff>0)gain(diff);
+function petCat(){
+  state.friend = Math.min(100, state.friend + 1);
+  const lines = [
+    "なでてくれて<br>うれしいにゃ♡",
+    "今日も会えて<br>うれしいにゃ",
+    "いっしょに<br>がんばろうにゃ",
+    "にゃ〜♪"
+  ];
+  say(lines[Math.floor(Math.random()*lines.length)]);
+  animateCat("happy");
   render();
 }
 
-function gain(point){
-  const p=getPet();
-  p.totalPoints+=point;
-  p.exp+=point*10;
-  p.happy=Math.min(100,p.happy+point*3);
-
-  while(p.exp>=100){
-    p.exp-=100;
-    if(!p.hatched){
-      const cat=randomOne(cats);
-      const personality=randomOne(personalities);
-      p.hatched=true; p.cat=cat; p.catName=""; p.personality=personality;
-      if(!p.book.find(x=>x.id===cat.id))p.book.push(cat);
-      pendingCat=cat;
-      startBirth(cat, personality);
-    }else{
-      p.coins+=5;
-    }
-  }
-  setPet(p);
+function say(text){
+  document.getElementById("bubble").innerHTML = text;
 }
 
-function startBirth(cat, personality){
-  birthStep=0;
-  document.getElementById("birthModal").classList.remove("hidden");
-  document.getElementById("birthEgg").className="birthEgg";
-  document.getElementById("bornCat").classList.add("hidden");
-  document.getElementById("catNameInput").classList.add("hidden");
-  document.getElementById("catNameInput").value="";
-  document.getElementById("birthTitle").textContent="ピシッ…！";
-  document.getElementById("bornText").textContent="たまごが動いているよ…";
-  document.getElementById("birthButton").textContent="つづける";
+function animateCat(name){
+  const cat = document.getElementById("cat");
+  cat.classList.remove("happy","eat","sleep","hungry");
+  void cat.offsetWidth;
+  cat.classList.add(name);
+  setTimeout(() => cat.classList.remove(name), 1600);
 }
 
-function nextBirthStep(){
-  const egg=document.getElementById("birthEgg");
-  const born=document.getElementById("bornCat");
-  const input=document.getElementById("catNameInput");
-  const p=getPet();
-
-  if(birthStep===0){
-    egg.classList.add("cracking");
-    document.getElementById("birthTitle").textContent="ピシピシ…！";
-    document.getElementById("bornText").textContent="もうすぐ生まれそう！";
-    birthStep++;
-    return;
-  }
-  if(birthStep===1){
-    egg.classList.add("hidden");
-    born.textContent=pendingCat.emoji;
-    born.classList.remove("hidden");
-    document.getElementById("birthTitle").textContent="おめでとう！";
-    document.getElementById("bornText").textContent=pendingCat.name+"がうまれたよ！ 性格は「"+p.personality.name+"」";
-    input.classList.remove("hidden");
-    document.getElementById("birthButton").textContent="名前を決める";
-    birthStep++;
-    return;
-  }
-  const name=input.value.trim();
-  if(name){
-    p.catName=name;
-    setPet(p);
-  }
-  closeBirthModal();
-}
-
-function closeBirthModal(){
-  document.getElementById("birthModal").classList.add("hidden");
-  pendingCat=null;
+setInterval(() => {
+  state.hunger = Math.max(0, state.hunger - 1);
+  state.sleepy = Math.min(100, state.sleepy + 1);
+  if(state.hunger < 35) say("おなかすいたにゃ…");
   render();
-}
+}, 60000);
 
-function showMood(text){
-  const b=document.getElementById("moodBubble");
-  b.textContent=text;
-  b.classList.remove("hidden");
-  setTimeout(()=>b.classList.add("hidden"),1600);
-}
-
-function useFood(){
-  const p=getPet();
-  if(p.totalPoints<10){speech("あと少しでごはんをあげられるよ♪");showMood("おなかすいた");return}
-  p.totalPoints-=10; p.coins+=3; p.exp+=15; p.hunger=Math.min(100,p.hunger+35);
-  setPet(p);
-  speech(p.hatched?"もぐもぐ。おいしいにゃ！":"たまごがぽかぽかしてきたよ！");
-  showMood("もぐもぐ");
-  render();
-}
-
-function play(){
-  const p=getPet();
-  p.happy=Math.min(100,p.happy+15);
-  p.hunger=Math.max(0,p.hunger-5);
-  setPet(p);
-  speech(p.hatched?"いっぱい遊んだにゃ！":"たまごがうれしそうに揺れた！");
-  showMood("たのしい!");
-  render();
-}
-
-function speech(t){document.getElementById("speech").textContent=t}
-
-function tapPet(){
-  const stage=document.querySelector(".petStage");
-  stage.classList.remove("bump");
-  void stage.offsetWidth;
-  stage.classList.add("bump");
-  const p=getPet();
-  const displayName=p.catName||p.cat?.name||"";
-  const personality=p.personality || personalities[0];
-  const phrases=p.hatched
-    ? personality.lines.concat(["なでなでうれしいにゃ","おかえり！",displayName+"に会いにきてくれてうれしいにゃ"])
-    : ["ぽかぽか…♪","なにが生まれるかな？","もう少しでヒビが入りそう！"];
-  const line=randomOne(phrases);
-  speech(line);
-  showMood(line.length>7 ? "にゃ♪" : line);
-}
-
-function buyItem(id,type){
-  const list=type==="dress"?dressItems:shopItems;
-  const item=list.find(x=>x.id===id);
-  const p=getPet();
-  if(p.items.includes(id))return;
-  if(p.coins<item.price){alert("コインが足りないよ");return}
-  p.coins-=item.price; p.items.push(id); setPet(p); render();
-}
-
-function resetToday(){
-  if(confirm("今日のポイントをリセットする？")){
-    const d=getDaily(); d[today()]={}; setDaily(d); render();
-  }
-}
-
-function renderPet(){
-  const p=getPet();
-  document.getElementById("totalPoints").textContent=p.totalPoints;
-  document.getElementById("coins").textContent=p.coins;
-  document.getElementById("expFill").style.width=p.exp+"%";
-  document.getElementById("expText").textContent=p.exp+"/100";
-  document.getElementById("happy").textContent=p.happy;
-  document.getElementById("hunger").textContent=p.hunger;
-
-  const emoji=document.getElementById("petEmoji");
-  const stage=document.querySelector(".petStage");
-  stage.classList.remove("walk");
-  emoji.className="petEmoji";
-
-  if(p.hatched&&p.cat){
-    let face=p.cat.emoji;
-    if(p.hunger<35) face="😿";
-    else if(p.happy>85) face="😻";
-    else if(p.happy<35) face="🙀";
-    emoji.textContent=face;
-    if(p.hunger<35) emoji.classList.add("hungry");
-    else if(p.happy>85) emoji.classList.add("happy");
-    else emoji.classList.add("sleepy");
-    stage.classList.add("walk");
-    document.getElementById("crack").textContent="";
-    const displayName=p.catName||p.cat.name;
-    const personalityName=p.personality?.name ? "（"+p.personality.name+"）" : "";
-    document.getElementById("mainMsg").innerHTML=displayName+"のおへや<br><small>"+personalityName+"</small>";
-    speech(p.happy<40?"さみしかったにゃ…":p.hunger<40?"おなかすいたにゃ…":displayName+"だよ。今日もよろしくにゃ♪");
-  }else{
-    emoji.textContent=p.exp>=70?"🥚✨":"🥚";
-    emoji.classList.add("egg");
-    document.getElementById("crack").textContent=p.exp>=70?"⚡ ⚡":(p.exp>=40?"⚡":"");
-    document.getElementById("mainMsg").innerHTML="ふしぎなたまごから<br>かわいい子がうまれるよ";
-  }
-  renderDressLayers(p);
-}
-
-function renderDressLayers(p){
-  document.getElementById("hatLayer").textContent="";
-  document.getElementById("ribbonLayer").textContent="";
-  if(!p.hatched)return;
-  if(p.items.includes("hat"))document.getElementById("hatLayer").textContent="👒";
-  if(p.items.includes("crown"))document.getElementById("hatLayer").textContent="👑";
-  if(p.items.includes("ribbon"))document.getElementById("ribbonLayer").textContent="🎀";
-  if(p.items.includes("wing"))document.getElementById("ribbonLayer").textContent="🪽";
-}
-
-function renderRoom(){
-  const p=getPet();
-  const box=document.getElementById("roomItems");
-  box.innerHTML="";
-  shopItems.forEach(i=>{
-    if(p.items.includes(i.id)){
-      const d=document.createElement("div");
-      d.className="floorItem "+i.cls;
-      d.textContent=i.emoji;
-      box.appendChild(d);
-    }
-  });
-}
-
-function renderSubjects(){
-  const subjects=getSubjects();
-  const daily=getDaily()[today()]||{};
-  const box=document.getElementById("subjects");
-  box.innerHTML=subjects.length?"":'<div class="empty">まだ科目がありません。「おすすめ科目を追加」から始めてね。</div>';
-
-  subjects.forEach(s=>{
-    const val=daily[s.id]||0;
-    const div=document.createElement("div");
-    div.className="subject";
-    div.innerHTML=`
-      <div class="subjectTop">
-        <div><div class="title">${s.name}</div><div class="meta">目標：${s.goal||"今日の目標"}</div></div>
-        <span class="pill">${val} pt</span>
-      </div>
-      <div class="points">${[0,1,2,3].map(n=>`<button class="${val===n?'selected':''}" onclick="setPoint(${s.id},${n})">${n===0?'0':"⭐".repeat(n)}</button>`).join("")}</div>`;
-    box.appendChild(div);
-  });
-
-  const list=document.getElementById("subjectList");
-  list.innerHTML=subjects.length?"":'<div class="empty">科目なし</div>';
-  subjects.forEach(s=>{
-    const div=document.createElement("div");
-    div.className="subject";
-    div.innerHTML=`<div class="subjectTop"><div><div class="title">${s.name}</div><div class="meta">${s.goal||""}</div></div><button class="secondary" onclick="removeSubject(${s.id})">削除</button></div>`;
-    list.appendChild(div);
-  });
-}
-
-function renderShop(){
-  const p=getPet();
-  [["shopGrid",shopItems,"shop"],["dressGrid",dressItems,"dress"]].forEach(([grid,items,type])=>{
-    const box=document.getElementById(grid);
-    box.innerHTML="";
-    items.forEach(i=>{
-      const owned=p.items.includes(i.id);
-      const div=document.createElement("div");
-      div.className="item";
-      div.innerHTML=`<span class="emoji">${i.emoji}</span><b>${i.name}</b><br><span class="price">🪙${i.price}</span><br>${owned?'<span class="owned">もってる</span>':`<button onclick="buyItem('${i.id}','${type}')">買う</button>`}`;
-      box.appendChild(div);
-    });
-  });
-}
-
-function renderBook(){
-  const p=getPet();
-  const book=document.getElementById("bookGrid");
-  book.innerHTML="";
-  cats.forEach(c=>{
-    const got=p.book.find(x=>x.id===c.id);
-    const div=document.createElement("div");
-    div.className="item";
-    div.innerHTML=`<span class="emoji">${got?c.emoji:"❔"}</span><b>${got?c.name:"？？？"}</b>`;
-    book.appendChild(div);
-  });
-}
-
-function render(){renderPet();renderRoom();renderSubjects();renderShop();renderBook();}
 render();

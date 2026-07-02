@@ -3,138 +3,55 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット Ver1.3</title>
+<title>まこペット Ver2.0</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
-  <h1>🐾 まこペット 🐾</h1>
-  <div class="sub">Ver1.3：かわいい絵文字ねこに戻したよ</div>
+<main class="app">
+  <div class="game">
+    <img src="makopet_art_ui.png" class="bg" alt="まこペット">
 
-  <section id="home">
-    <div class="card room" id="room">
-      <div class="sparkles">✨ ✨ ✨</div>
-      <div class="window"></div>
-      <div class="shelf">📚</div>
-      <div id="roomItems"></div>
-
-      <div class="topbar">
-        <div class="badge">⭐ <span id="totalPoints">0</span> pt</div>
-        <div class="badge">🪙 <span id="coins">0</span></div>
-      </div>
-
-      <div class="message" id="mainMsg">ふしぎなたまごから<br>かわいい子がうまれるよ</div>
-
-      <div class="petStage" onclick="tapPet()">
-        <div id="hatLayer" class="hatLayer"></div>
-        <div id="petEmoji" class="petEmoji">🥚</div>
-        <div id="ribbonLayer" class="ribbonLayer"></div>
-        <div id="moodBubble" class="moodBubble hidden">にゃ♪</div>
-      </div>
-
-      <div id="crack" class="crack"></div>
-
-      <div class="bar"><div class="fill" id="expFill"></div></div>
-      <div class="meta">EXP <span id="expText">0/100</span></div>
-
-      <div class="speech" id="speech">たまごをタップしてみてね♪</div>
-
-      <div class="stats">
-        <div class="stat">❤️ ごきげん <span id="happy">100</span></div>
-        <div class="stat">🍖 おなか <span id="hunger">100</span></div>
-      </div>
-
-      <div class="actions">
-        <button onclick="useFood()">🍎 ごはん 10pt</button>
-        <button class="soft" onclick="play()">🧸 あそぶ</button>
-      </div>
+    <div class="scoreBox">
+      <div>今日のポイント</div>
+      <strong><span id="points">0</span> pt</strong>
     </div>
 
-    <div class="card">
-      <h2>📚 今日のポイント</h2>
-      <div class="notice">科目ごとに0〜3ポイント。少しでもやったら1ポイント！</div>
-      <div id="subjects"></div>
-      <button onclick="addDefaultSubjects()">おすすめ科目を追加</button>
-      <button class="secondary" onclick="resetToday()">今日のポイントをリセット</button>
+    <div class="statusPanel">
+      <div>💗 なかよし <b id="friend">80</b>/100</div>
+      <div>🍖 おなか <b id="hunger">70</b>/100</div>
+      <div>😊 げんき <b id="energy">90</b>/100</div>
+      <div>🌙 ねむけ <b id="sleepy">40</b>/100</div>
     </div>
-  </section>
 
-  <section id="manage" class="hidden">
-    <div class="card">
-      <h2>➕ 科目を追加</h2>
-      <input id="subjectName" placeholder="例：Z会 国語、算数ラボ">
-      <input id="subjectGoal" placeholder="例：2ページ、10分">
-      <button onclick="addSubject()">追加する</button>
+    <div id="cat" class="cat" onclick="petCat()">🐱</div>
+    <div id="bubble" class="bubble">がんばったね！<br>えらいにゃ〜♡</div>
+
+    <section class="taskPanel">
+      <h2>🎀 きょうのやること</h2>
+      <div id="tasks"></div>
+      <button onclick="addTask()">＋ 科目を追加する</button>
+    </section>
+
+    <button class="side feed" onclick="feedCat()">🍚<br>ごはん<br><small>10pt〜</small></button>
+    <button class="side room" onclick="buyFurniture()">🛋<br>おへや</button>
+    <button class="side dress" onclick="dressCat()">👗<br>おようふく</button>
+    <button class="side book" onclick="showBook()">📘<br>ずかん</button>
+    <button class="side settings" onclick="resetAll()">⚙️<br>せってい</button>
+
+    <button class="bottom home" onclick="say('おかえりにゃ♡')">🏠<br>ホーム</button>
+    <button class="bottom record" onclick="say('今日も記録できてえらい！')">📒<br>きろく</button>
+    <button class="bottom mission" onclick="say('ミッション達成をめざそう！')">✅<br>ミッション</button>
+    <button class="bottom shop" onclick="say('ポイントでかわいい物を増やそう♪')">🏪<br>ショップ</button>
+    <button class="bottom gacha" onclick="gachaEgg()">🥚<br>ガチャ</button>
+
+    <div class="miniPanel">
+      <div>今日のポイント</div>
+      <strong><span id="points2">0</span> pt</strong>
+      <div class="foodMeter"><span id="foodFill"></span></div>
+      <small>10ポイントでごはんがあげられるよ！</small>
     </div>
-    <div class="card">
-      <h2>📋 科目一覧</h2>
-      <div id="subjectList"></div>
-    </div>
-  </section>
-
-  <section id="shop" class="hidden">
-    <div class="card">
-      <h2>🛋 家具・おもちゃ</h2>
-      <div class="notice">買うとホームのお部屋に表示されるよ。</div>
-      <div class="grid" id="shopGrid"></div>
-    </div>
-  </section>
-
-  <section id="dress" class="hidden">
-    <div class="card">
-      <h2>🎀 着せ替え</h2>
-      <div class="notice">リボン・帽子・王冠がねこに反映されるよ。</div>
-      <div class="grid" id="dressGrid"></div>
-    </div>
-  </section>
-
-  <section id="book" class="hidden">
-    <div class="card">
-      <h2>📖 ねこ図鑑</h2>
-      <div class="grid" id="bookGrid"></div>
-    </div>
-  </section>
-
-  <section id="note" class="hidden">
-    <div class="card devnote">
-      <h2>📒 開発ノート</h2>
-      <h3>Ver1.3</h3>
-      <ul>
-        <li>CSS手描きねこをやめた</li>
-        <li>絵文字ねこを大きく表示</li>
-        <li>表情が変わるようにした</li>
-        <li>着せ替えを見やすくした</li>
-      </ul>
-      <h3>次に作る候補</h3>
-      <ul>
-        <li>猫の種類をもっと増やす</li>
-        <li>レアたまご</li>
-        <li>毎日ログインボーナス</li>
-      </ul>
-    </div>
-  </section>
-</main>
-
-<nav class="tabs">
-  <button class="active" onclick="showTab('home',this)">🏠ホーム</button>
-  <button onclick="showTab('manage',this)">📚科目</button>
-  <button onclick="showTab('shop',this)">🛋家具</button>
-  <button onclick="showTab('dress',this)">🎀服</button>
-  <button onclick="showTab('book',this)">📖図鑑</button>
-  <button onclick="showTab('note',this)">📒ノート</button>
-</nav>
-
-<div id="birthModal" class="modal hidden">
-  <div class="modalCard birthCard">
-    <div class="confetti">✨🎉✨</div>
-    <div id="birthEgg" class="birthEgg">🥚</div>
-    <div id="bornCat" class="bornCat hidden">🐱</div>
-    <h2 id="birthTitle">ピシッ…！</h2>
-    <p id="bornText">たまごが動いているよ…</p>
-    <input id="catNameInput" class="hidden" placeholder="名前をつけてね">
-    <button id="birthButton" onclick="nextBirthStep()">つづける</button>
   </div>
-</div>
+</main>
 
 <script src="app.js"></script>
 </body>
