@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット Ver0.8</title>
+<title>まこペット Ver1.1</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
   <h1>🐾 まこペット 🐾</h1>
-  <div class="sub">Ver0.8：たまごが割れて、かわいい子が生まれるよ</div>
+  <div class="sub">Ver1.1：オリジナル風のたまごとねこになったよ</div>
 
   <section id="home">
     <div class="card room" id="room">
@@ -25,9 +25,9 @@
 
       <div class="message" id="mainMsg">ふしぎなたまごから<br>かわいい子がうまれるよ</div>
 
-      <div class="petStage">
+      <div class="petStage" onclick="tapPet()">
         <div id="hatLayer" class="hatLayer"></div>
-        <div id="petIcon" class="pet" onclick="tapPet()">🥚</div>
+        <div id="petArt"></div>
         <div id="ribbonLayer" class="ribbonLayer"></div>
       </div>
 
@@ -82,7 +82,7 @@
   <section id="dress" class="hidden">
     <div class="card">
       <h2>🎀 着せ替え</h2>
-      <div class="notice">買うとホームの猫に少し反映されるよ。</div>
+      <div class="notice">リボン・帽子・王冠がねこに反映されるよ。</div>
       <div class="grid" id="dressGrid"></div>
     </div>
   </section>
@@ -97,18 +97,18 @@
   <section id="note" class="hidden">
     <div class="card devnote">
       <h2>📒 開発ノート</h2>
-      <h3>Ver0.8</h3>
+      <h3>Ver1.1</h3>
       <ul>
-        <li>誕生モーダルを強化</li>
-        <li>たまごがピシピシ割れる演出</li>
-        <li>生まれた猫に名前をつけられる</li>
-        <li>猫の表示を少し大きくかわいく</li>
+        <li>絵文字の卵・猫から、CSSで描くオリジナル風に変更</li>
+        <li>猫の種類で色が変わる</li>
+        <li>着せ替え表示を強化</li>
+        <li>部屋の見た目を少しパステルゲーム風に変更</li>
       </ul>
       <h3>次に作る候補</h3>
       <ul>
-        <li>猫の種類を増やす</li>
         <li>猫に性格をつける</li>
-        <li>家具を自由に配置</li>
+        <li>レアたまごを追加</li>
+        <li>毎日ログインボーナス</li>
       </ul>
     </div>
   </section>
@@ -126,8 +126,8 @@
 <div id="birthModal" class="modal hidden">
   <div class="modalCard birthCard">
     <div class="confetti">✨🎉✨</div>
-    <div id="birthEgg" class="birthEgg">🥚</div>
-    <div class="bornCat hidden" id="bornCat">🐱</div>
+    <div id="birthEgg" class="eggArt birthEggArt"><span></span></div>
+    <div id="bornCat" class="catArt bornArt hidden"><div class="face"><i></i><b></b></div></div>
     <h2 id="birthTitle">ピシッ…！</h2>
     <p id="bornText">たまごが動いているよ…</p>
     <input id="catNameInput" class="hidden" placeholder="名前をつけてね">

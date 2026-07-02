@@ -1,10 +1,15 @@
-const SUBJECT_KEY="makopet_subjects_v4";
-const DAILY_KEY="makopet_daily_v4";
-const PET_KEY="makopet_pet_v4";
+const SUBJECT_KEY="makopet_subjects_v5";
+const DAILY_KEY="makopet_daily_v5";
+const PET_KEY="makopet_pet_v5";
 
 const cats=[
-  ["🐱","しろねこ"],["🐈","みけねこ"],["🐈‍⬛","くろねこ"],["😺","ちゃとら"],
-  ["😸","にこねこ"],["🌸","さくらねこ"],["⭐","ほしねこ"],["🍓","いちごねこ"],["🦖","きょうりゅうねこ"]
+  {id:"white",name:"しろねこ",emoji:"🐱",className:""},
+  {id:"mike",name:"みけねこ",emoji:"🐈",className:"mike"},
+  {id:"black",name:"くろねこ",emoji:"🐈‍⬛",className:"black"},
+  {id:"orange",name:"ちゃとら",emoji:"😺",className:"orange"},
+  {id:"pink",name:"さくらねこ",emoji:"🌸",className:"pink"},
+  {id:"star",name:"ほしねこ",emoji:"⭐",className:"star"},
+  {id:"dino",name:"きょうりゅうねこ",emoji:"🦖",className:"dino"}
 ];
 
 const shopItems=[
@@ -103,7 +108,7 @@ function gain(point){
     if(!p.hatched){
       const cat=cats[Math.floor(Math.random()*cats.length)];
       p.hatched=true; p.cat=cat; p.catName="";
-      if(!p.book.find(x=>x[1]===cat[1]))p.book.push(cat);
+      if(!p.book.find(x=>x.id===cat.id))p.book.push(cat);
       pendingCat=cat;
       startBirth(cat);
     }else{
@@ -117,7 +122,7 @@ function startBirth(cat){
   birthStep=0;
   document.getElementById("birthModal").classList.remove("hidden");
   document.getElementById("birthEgg").classList.remove("hidden","cracking");
-  document.getElementById("bornCat").classList.add("hidden");
+  document.getElementById("bornCat").className="catArt bornArt hidden "+cat.className;
   document.getElementById("catNameInput").classList.add("hidden");
   document.getElementById("catNameInput").value="";
   document.getElementById("birthTitle").textContent="ピシッ…！";
@@ -139,10 +144,9 @@ function nextBirthStep(){
   }
   if(birthStep===1){
     egg.classList.add("hidden");
-    born.textContent=pendingCat[0];
     born.classList.remove("hidden");
     document.getElementById("birthTitle").textContent="おめでとう！";
-    document.getElementById("bornText").textContent=pendingCat[1]+"がうまれたよ！";
+    document.getElementById("bornText").textContent=pendingCat.name+"がうまれたよ！";
     input.classList.remove("hidden");
     document.getElementById("birthButton").textContent="名前を決める";
     birthStep++;
@@ -184,12 +188,12 @@ function play(){
 function speech(t){document.getElementById("speech").textContent=t}
 
 function tapPet(){
-  const pet=document.getElementById("petIcon");
-  pet.classList.remove("bump");
-  void pet.offsetWidth;
-  pet.classList.add("bump");
+  const stage=document.querySelector(".petStage");
+  stage.classList.remove("bump");
+  void stage.offsetWidth;
+  stage.classList.add("bump");
   const p=getPet();
-  const displayName=p.catName||p.cat?.[1]||"";
+  const displayName=p.catName||p.cat?.name||"";
   const phrases=p.hatched
     ? ["なでなでうれしいにゃ","おかえり！",displayName+"に会いにきてくれてうれしいにゃ","遊ぼうにゃ♪"]
     : ["ぽかぽか…♪","なにが生まれるかな？","もう少しでヒビが入りそう！"];
@@ -211,6 +215,22 @@ function resetToday(){
   }
 }
 
+function makeEgg(exp){
+  const div=document.createElement("div");
+  div.className="eggArt"+(exp>=70?" glow":"");
+  const span=document.createElement("span");
+  span.textContent=exp>=70?"⚡":(exp>=40?"⌁":"");
+  div.appendChild(span);
+  return div;
+}
+
+function makeCat(cat){
+  const div=document.createElement("div");
+  div.className="catArt "+(cat?.className||"");
+  div.innerHTML='<div class="face"><i></i><b></b></div>';
+  return div;
+}
+
 function renderPet(){
   const p=getPet();
   document.getElementById("totalPoints").textContent=p.totalPoints;
@@ -220,19 +240,20 @@ function renderPet(){
   document.getElementById("happy").textContent=p.happy;
   document.getElementById("hunger").textContent=p.hunger;
 
-  const pet=document.getElementById("petIcon");
-  pet.className="pet";
+  const art=document.getElementById("petArt");
+  art.innerHTML="";
+  const stage=document.querySelector(".petStage");
+  stage.classList.remove("walk");
 
   if(p.hatched&&p.cat){
-    pet.textContent=p.cat[0];
-    pet.classList.add("walk");
+    art.appendChild(makeCat(p.cat));
+    stage.classList.add("walk");
     document.getElementById("crack").textContent="";
-    const displayName=p.catName||p.cat[1];
+    const displayName=p.catName||p.cat.name;
     document.getElementById("mainMsg").innerHTML=displayName+"のおへや";
     speech(p.happy<40?"さみしかったにゃ…":p.hunger<40?"おなかすいたにゃ…":displayName+"だよ。今日もよろしくにゃ♪");
   }else{
-    pet.textContent=p.exp>=70?"🥚✨":"🥚";
-    if(p.exp>=70) pet.classList.add("hatchGlow");
+    art.appendChild(makeEgg(p.exp));
     document.getElementById("crack").textContent=p.exp>=70?"⚡ ⚡":(p.exp>=40?"⚡":"");
     document.getElementById("mainMsg").innerHTML="ふしぎなたまごから<br>かわいい子がうまれるよ";
   }
@@ -312,10 +333,10 @@ function renderBook(){
   const book=document.getElementById("bookGrid");
   book.innerHTML="";
   cats.forEach(c=>{
-    const got=p.book.find(x=>x[1]===c[1]);
+    const got=p.book.find(x=>x.id===c.id);
     const div=document.createElement("div");
     div.className="item";
-    div.innerHTML=`<span class="emoji">${got?c[0]:"❔"}</span><b>${got?c[1]:"？？？"}</b>`;
+    div.innerHTML=`<span class="emoji">${got?c.emoji:"❔"}</span><b>${got?c.name:"？？？"}</b>`;
     book.appendChild(div);
   });
 }
