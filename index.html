@@ -3,62 +3,70 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット</title>
+<title>まこペット Ver0.6</title>
 <style>
-:root{--pink:#ef7fbc;--line:#f0d6e4;--ink:#382b35;--muted:#82737e}
+:root{--pink:#ef7fbc;--line:#f0d6e4;--ink:#382b35;--muted:#82737e;--cream:#fff4d8}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:linear-gradient(#fff4fb,#fffdf6);color:var(--ink)}
-main{max-width:760px;margin:0 auto;padding:14px 14px 92px}
+main{max-width:780px;margin:0 auto;padding:14px 14px 92px}
 h1{text-align:center;color:#f06fae;font-size:30px;margin:10px 0 2px}
 h2{font-size:20px;margin:0 0 12px}.sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:12px}
 .card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:16px;margin:12px 0;box-shadow:0 8px 22px rgba(170,80,130,.12)}
-.room{text-align:center;min-height:420px;background:radial-gradient(circle at 50% 44%,#fff,#fff0c9 42%,#ffddeb 100%)}
-.topbar{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
+.room{text-align:center;min-height:455px;position:relative;overflow:hidden;background:linear-gradient(#ffe8f5 0 45%,#fff3ce 45% 100%)}
+.window{position:absolute;left:28px;top:70px;width:82px;height:78px;border-radius:18px;background:#dff0ff;border:5px solid #fff;box-shadow:0 4px 10px #e2bcd0}
+.shelf{position:absolute;right:30px;top:85px;font-size:42px}.floorItem{position:absolute;font-size:38px;bottom:78px}
+.item-bed{left:35px}.item-ball{right:45px}.item-plant{right:110px;bottom:108px}.item-sofa{left:110px}.item-toy{right:170px}.item-tower{left:24px;bottom:135px}
+.topbar{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px;position:relative;z-index:2}
 .badge{background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-weight:900}
-.message{display:inline-block;background:#fff9fe;border:2px solid #ffd0e8;border-radius:28px;padding:14px 18px;margin:8px auto 4px;font-weight:900;color:#d84e91;font-size:20px;line-height:1.45}
-.egg{font-size:126px;line-height:1;margin:20px 0 4px;filter:drop-shadow(0 14px 14px rgba(80,40,50,.18));cursor:pointer;user-select:none}
-.egg.bump{animation:bump .55s}
-@keyframes bump{0%,100%{transform:rotate(0deg) scale(1)}20%{transform:rotate(-8deg) scale(1.08)}45%{transform:rotate(8deg) scale(1.08)}70%{transform:rotate(-4deg) scale(1.04)}}
+.message{display:inline-block;background:#fff9fe;border:2px solid #ffd0e8;border-radius:28px;padding:12px 16px;margin:4px auto;font-weight:900;color:#d84e91;font-size:19px;line-height:1.45;position:relative;z-index:2}
+.pet{font-size:118px;line-height:1;margin:22px 0 4px;filter:drop-shadow(0 14px 14px rgba(80,40,50,.18));cursor:pointer;user-select:none;position:relative;z-index:3;display:inline-block}
+.pet.walk{animation:walk 4s infinite ease-in-out}.pet.bump{animation:bump .55s}
+@keyframes walk{0%,100%{transform:translateX(-22px)}50%{transform:translateX(22px)}}@keyframes bump{0%,100%{transform:rotate(0deg) scale(1)}25%{transform:rotate(-8deg) scale(1.08)}55%{transform:rotate(8deg) scale(1.08)}}
 .crack{font-size:30px;height:34px;color:#7d6a52}
-.speech{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:20px;padding:10px 14px;margin:8px auto;color:#6f5968;max-width:92%}
-.bar{height:17px;background:#f5e8f0;border-radius:999px;overflow:hidden;margin:10px auto;max-width:330px}
-.fill{height:100%;background:linear-gradient(90deg,#ef7fbc,#ffc45c);width:0%}
+.speech{display:inline-block;background:#fff;border:1px solid var(--line);border-radius:20px;padding:10px 14px;margin:8px auto;color:#6f5968;max-width:92%;position:relative;z-index:2}
+.bar{height:14px;background:#f5e8f0;border-radius:999px;overflow:hidden;margin:8px auto;max-width:330px}.fill{height:100%;background:linear-gradient(90deg,#ef7fbc,#ffc45c);width:0%}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px;font-size:13px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;position:relative;z-index:2}
 button,input{font:inherit;border-radius:16px;border:1px solid var(--line);padding:12px;width:100%}
-button{background:var(--pink);color:#fff;border:0;font-weight:900;margin-top:8px}
-button.secondary{background:#f6edf3;color:var(--ink)}button.soft{background:#fff;color:#d44e90;border:1px solid var(--line)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.notice{background:#fff8dd;border:1px solid #ffe09d;border-radius:18px;padding:12px;color:#80643b}
-.subject{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
+button{background:var(--pink);color:#fff;border:0;font-weight:900;margin-top:8px}button.secondary{background:#f6edf3;color:var(--ink)}button.soft{background:#fff;color:#d44e90;border:1px solid var(--line)}
+.notice{background:#fff8dd;border:1px solid #ffe09d;border-radius:18px;padding:12px;color:#80643b}.subject{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px;margin:10px 0}
 .subjectTop{display:flex;justify-content:space-between;gap:10px;align-items:center}.title{font-weight:900}.meta,.empty{font-size:14px;color:var(--muted)}
 .pill{display:inline-block;border-radius:999px;padding:4px 9px;background:#fff0f7;color:#a93672;font-size:12px;font-weight:900}
 .points{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}.points button{padding:10px 4px;background:#fff;color:#7b6775;border:1px solid var(--line)}
-.points button.selected{background:#ffdbed;color:#c53f85;border-color:#ffabd4}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.item{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center;min-height:112px}
-.emoji{font-size:42px;display:block;margin-bottom:4px}.price{font-size:13px;color:#b06a22;font-weight:900}.owned{background:#effff4;color:#2c8b49;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:900}
+.points button.selected{background:#ffdbed;color:#c53f85;border-color:#ffabd4}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.item{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center;min-height:112px}.emoji{font-size:42px;display:block;margin-bottom:4px}.price{font-size:13px;color:#b06a22;font-weight:900}
+.owned{background:#effff4;color:#2c8b49;border-radius:999px;padding:3px 8px;font-size:12px;font-weight:900}
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:5;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:center;gap:4px;padding:8px}
-.tabs button{max-width:135px;background:#fff;color:#806b79;border:1px solid var(--line);font-size:13px;margin-top:0}.tabs button.active{background:var(--pink);color:#fff}
-.hidden{display:none}.devnote{line-height:1.65;font-size:14px;color:#554752}.devnote h3{margin:14px 0 6px;color:#d84e91}
+.tabs button{max-width:135px;background:#fff;color:#806b79;border:1px solid var(--line);font-size:13px;margin-top:0}.tabs button.active{background:var(--pink);color:#fff}.hidden{display:none}
+.devnote{line-height:1.65;font-size:14px;color:#554752}.devnote h3{margin:14px 0 6px;color:#d84e91}
 </style>
 </head>
 <body>
 <main>
 <h1>🐾 まこペット 🐾</h1>
-<div class="sub">ふしぎなたまごとポイント制がはじまったよ</div>
+<div class="sub">Ver0.6：おへや・家具・ごきげんが入ったよ</div>
 
 <section id="home">
-  <div class="card room">
+  <div class="card room" id="room">
+    <div class="window"></div><div class="shelf">📚</div>
+    <div id="roomItems"></div>
     <div class="topbar"><div class="badge">⭐ <span id="totalPoints">0</span> pt</div><div class="badge">🪙 <span id="coins">0</span></div></div>
-    <div class="message">ふしぎなたまごから<br>かわいい子がうまれるよ</div>
-    <div id="egg" class="egg" onclick="tapEgg()">🥚</div>
+    <div class="message" id="mainMsg">ふしぎなたまごから<br>かわいい子がうまれるよ</div>
+    <div id="petIcon" class="pet" onclick="tapPet()">🥚</div>
     <div id="crack" class="crack"></div>
     <div class="bar"><div class="fill" id="expFill"></div></div>
-    <div class="meta">たまごEXP <span id="expText">0/100</span></div>
+    <div class="meta">EXP <span id="expText">0/100</span></div>
     <div class="speech" id="speech">たまごをタップしてみてね♪</div>
-    <div class="actions"><button onclick="useFood()">🍎 ごはん 10pt</button><button class="soft" onclick="tapEgg()">✨ たまごをなでる</button></div>
+    <div class="stats">
+      <div class="stat">❤️ ごきげん <span id="happy">100</span></div>
+      <div class="stat">🍖 おなか <span id="hunger">100</span></div>
+    </div>
+    <div class="actions"><button onclick="useFood()">🍎 ごはん 10pt</button><button class="soft" onclick="play()">🧸 あそぶ</button></div>
   </div>
+
   <div class="card">
     <h2>📚 今日のポイント</h2>
-    <div class="notice">科目ごとに、0〜3ポイントをつけてね。少しでもやったら1ポイント！</div>
+    <div class="notice">0〜3ポイント。少しでもやったら1ポイント！</div>
     <div id="subjects"></div>
     <button onclick="addDefaultSubjects()">おすすめ科目を追加</button>
     <button class="secondary" onclick="resetToday()">今日のポイントをリセット</button>
@@ -66,44 +74,50 @@ button.secondary{background:#f6edf3;color:var(--ink)}button.soft{background:#fff
 </section>
 
 <section id="manage" class="hidden">
-  <div class="card"><h2>➕ 科目を追加</h2><input id="subjectName" placeholder="例：Z会 国語、算数ラボ、漢字ドリル"><input id="subjectGoal" placeholder="例：2ページ、10分、1枚"><button onclick="addSubject()">追加する</button></div>
+  <div class="card"><h2>➕ 科目を追加</h2><input id="subjectName" placeholder="例：Z会 国語、算数ラボ"><input id="subjectGoal" placeholder="例：2ページ、10分"><button onclick="addSubject()">追加する</button></div>
   <div class="card"><h2>📋 科目一覧</h2><div id="subjectList"></div></div>
 </section>
 
-<section id="shop" class="hidden"><div class="card"><h2>🛋 家具・おもちゃ</h2><div class="notice">掃除はなし。ポイントでかわいいものを増やしていくよ。</div><div class="grid" id="shopGrid"></div></div></section>
-<section id="dress" class="hidden"><div class="card"><h2>🎀 着せ替え</h2><div class="notice">猫が生まれたら着せ替えできるようにする予定。</div><div class="grid" id="dressGrid"></div></div></section>
+<section id="shop" class="hidden"><div class="card"><h2>🛋 家具・おもちゃ</h2><div class="notice">買うとホームのお部屋に表示されるよ。</div><div class="grid" id="shopGrid"></div></div></section>
+<section id="dress" class="hidden"><div class="card"><h2>🎀 着せ替え</h2><div class="notice">着せ替え表示は次回強化予定。買うことはできるよ。</div><div class="grid" id="dressGrid"></div></div></section>
 <section id="book" class="hidden"><div class="card"><h2>📖 ねこ図鑑</h2><div class="grid" id="bookGrid"></div></div></section>
-<section id="note" class="hidden"><div class="card devnote"><h2>📒 開発ノート</h2><h3>コンセプト</h3><p><b>勉強したくなるではなく、猫に会いたくなるアプリ。</b></p><h3>決定事項</h3><ul><li>最初は恐竜みたいなふしぎなたまご</li><li>科目ごとに0〜3ポイント</li><li>10ポイントでごはん</li><li>掃除はなし。家具・おもちゃ・着せ替えを増やす</li></ul></div></section>
+<section id="note" class="hidden"><div class="card devnote"><h2>📒 開発ノート</h2><h3>Ver0.6</h3><ul><li>おへや背景</li><li>家具を買うと部屋に出る</li><li>ごきげん・おなか追加</li><li>猫が少し歩く</li></ul><h3>次</h3><ul><li>誕生演出をキラキラにする</li><li>猫に名前をつける</li><li>着せ替えを猫に反映</li></ul></div></section>
 </main>
+
 <nav class="tabs">
 <button class="active" onclick="showTab('home',this)">🏠ホーム</button><button onclick="showTab('manage',this)">📚科目</button><button onclick="showTab('shop',this)">🛋家具</button><button onclick="showTab('dress',this)">🎀服</button><button onclick="showTab('book',this)">📖図鑑</button><button onclick="showTab('note',this)">📒ノート</button>
 </nav>
 
 <script>
-const SUBJECT_KEY="makopet_subjects_v1", DAILY_KEY="makopet_daily_v1", PET_KEY="makopet_pet_v1";
-const cats=[["🐱","しろねこ"],["🐈","みけねこ"],["🐈‍⬛","くろねこ"],["😺","ちゃとら"],["🌸","さくらねこ"],["⭐","ほしねこ"],["🍓","いちごねこ"],["🦖","きょうりゅうねこ"]];
-const shopItems=[{id:"bed",emoji:"🛏",name:"ふかふかベッド",price:30},{id:"ball",emoji:"🧶",name:"毛糸ボール",price:20},{id:"tower",emoji:"🏰",name:"キャットタワー",price:80},{id:"plant",emoji:"🪴",name:"観葉植物",price:40},{id:"sofa",emoji:"🛋",name:"ソファ",price:70},{id:"toy",emoji:"🧸",name:"ぬいぐるみ",price:50}];
+const SUBJECT_KEY="makopet_subjects_v2", DAILY_KEY="makopet_daily_v2", PET_KEY="makopet_pet_v2";
+const cats=[["🐱","しろねこ"],["🐈","みけねこ"],["🐈‍⬛","くろねこ"],["😺","ちゃとら"],["😸","にこねこ"],["🌸","さくらねこ"],["⭐","ほしねこ"],["🍓","いちごねこ"],["🦖","きょうりゅうねこ"]];
+const shopItems=[{id:"bed",emoji:"🛏",name:"ふかふかベッド",price:30,cls:"item-bed"},{id:"ball",emoji:"🧶",name:"毛糸ボール",price:20,cls:"item-ball"},{id:"tower",emoji:"🏰",name:"キャットタワー",price:80,cls:"item-tower"},{id:"plant",emoji:"🪴",name:"観葉植物",price:40,cls:"item-plant"},{id:"sofa",emoji:"🛋",name:"ソファ",price:70,cls:"item-sofa"},{id:"toy",emoji:"🧸",name:"ぬいぐるみ",price:50,cls:"item-toy"}];
 const dressItems=[{id:"ribbon",emoji:"🎀",name:"ピンクリボン",price:40},{id:"hat",emoji:"👒",name:"おでかけ帽子",price:60},{id:"crown",emoji:"👑",name:"王冠",price:120},{id:"wing",emoji:"🪽",name:"天使の羽",price:150}];
 function load(k,d){return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))} function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function today(){return new Date().toISOString().slice(0,10)}
 function getSubjects(){return load(SUBJECT_KEY,[])} function setSubjects(v){save(SUBJECT_KEY,v)}
 function getDaily(){let d=load(DAILY_KEY,{}); if(!d[today()])d[today()]={}; return d} function setDaily(v){save(DAILY_KEY,v)}
-function getPet(){return load(PET_KEY,{exp:0,totalPoints:0,coins:0,hatched:false,cat:null,book:[],items:[]})} function setPet(v){save(PET_KEY,v)}
+function getPet(){let p=load(PET_KEY,{exp:0,totalPoints:0,coins:0,hatched:false,cat:null,book:[],items:[],happy:100,hunger:100,last:today()}); 
+ if(p.last!==today()){p.happy=Math.max(0,p.happy-15);p.hunger=Math.max(0,p.hunger-20);p.last=today();save(PET_KEY,p)} return p}
+function setPet(v){save(PET_KEY,v)}
 function showTab(id,btn){["home","manage","shop","dress","book","note"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));btn.classList.add("active");render()}
 function addDefaultSubjects(){const s=getSubjects();[{id:Date.now()+1,name:"Z会 国語",goal:"2ページ"},{id:Date.now()+2,name:"算数ラボ",goal:"1ページ"},{id:Date.now()+3,name:"漢字ドリル",goal:"1ページ"}].forEach(d=>{if(!s.find(x=>x.name===d.name))s.push(d)});setSubjects(s);render()}
 function addSubject(){const name=document.getElementById("subjectName").value.trim(), goal=document.getElementById("subjectGoal").value.trim(); if(!name){alert("科目・教材名を入れてね");return} const s=getSubjects();s.push({id:Date.now(),name,goal:goal||"今日の目標"});setSubjects(s);document.getElementById("subjectName").value="";document.getElementById("subjectGoal").value="";render()}
 function removeSubject(id){if(confirm("この科目を削除する？")){setSubjects(getSubjects().filter(s=>s.id!==id));render()}}
 function setPoint(id,point){const d=getDaily(), old=d[today()][id]||0; d[today()][id]=point; setDaily(d); const diff=point-old; if(diff>0)gain(diff); render()}
-function gain(point){const p=getPet();p.totalPoints+=point;p.exp+=point*10;while(p.exp>=100){p.exp-=100;if(!p.hatched){const cat=cats[Math.floor(Math.random()*cats.length)];p.hatched=true;p.cat=cat;if(!p.book.find(x=>x[1]===cat[1]))p.book.push(cat);setTimeout(()=>alert("✨おめでとう！\\n"+cat[1]+"がうまれたよ！"),200)}else{p.coins+=5}}setPet(p)}
-function useFood(){const p=getPet();if(p.totalPoints<10){document.getElementById("speech").textContent="あと少しでごはんをあげられるよ♪";return}p.totalPoints-=10;p.coins+=3;p.exp+=15;setPet(p);document.getElementById("speech").textContent=p.hatched?"もぐもぐ。おいしいにゃ！":"たまごがぽかぽかしてきたよ！";render()}
-function tapEgg(){const egg=document.getElementById("egg");egg.classList.remove("bump");void egg.offsetWidth;egg.classList.add("bump");const phrases=["ぽかぽか…♪","なにが生まれるかな？","もう少しでヒビが入りそう！","今日も会いにきてくれてありがとう"];document.getElementById("speech").textContent=phrases[Math.floor(Math.random()*phrases.length)]}
+function gain(point){const p=getPet();p.totalPoints+=point;p.exp+=point*10;p.happy=Math.min(100,p.happy+point*3);while(p.exp>=100){p.exp-=100;if(!p.hatched){const cat=cats[Math.floor(Math.random()*cats.length)];p.hatched=true;p.cat=cat;if(!p.book.find(x=>x[1]===cat[1]))p.book.push(cat);setTimeout(()=>alert("✨おめでとう！\\n"+cat[1]+"がうまれたよ！"),200)}else{p.coins+=5}}setPet(p)}
+function useFood(){const p=getPet();if(p.totalPoints<10){speech("あと少しでごはんをあげられるよ♪");return}p.totalPoints-=10;p.coins+=3;p.exp+=15;p.hunger=Math.min(100,p.hunger+35);setPet(p);speech(p.hatched?"もぐもぐ。おいしいにゃ！":"たまごがぽかぽかしてきたよ！");render()}
+function play(){const p=getPet();p.happy=Math.min(100,p.happy+15);p.hunger=Math.max(0,p.hunger-5);setPet(p);speech(p.hatched?"いっぱい遊んだにゃ！":"たまごがうれしそうに揺れた！");render()}
+function speech(t){document.getElementById("speech").textContent=t}
+function tapPet(){const pet=document.getElementById("petIcon");pet.classList.remove("bump");void pet.offsetWidth;pet.classList.add("bump");const p=getPet();const phrases=p.hatched?["なでなでうれしいにゃ","おかえり！","今日も会えてうれしいにゃ","遊ぼうにゃ♪"]:["ぽかぽか…♪","なにが生まれるかな？","もう少しでヒビが入りそう！"];speech(phrases[Math.floor(Math.random()*phrases.length)])}
 function buyItem(id,type){const list=type==="dress"?dressItems:shopItems,item=list.find(x=>x.id===id),p=getPet();if(p.items.includes(id))return;if(p.coins<item.price){alert("コインが足りないよ");return}p.coins-=item.price;p.items.push(id);setPet(p);render()}
 function resetToday(){if(confirm("今日のポイントをリセットする？")){const d=getDaily();d[today()]={};setDaily(d);render()}}
-function renderPet(){const p=getPet();document.getElementById("totalPoints").textContent=p.totalPoints;document.getElementById("coins").textContent=p.coins;document.getElementById("expFill").style.width=p.exp+"%";document.getElementById("expText").textContent=p.exp+"/100";const egg=document.getElementById("egg");if(p.hatched&&p.cat){egg.textContent=p.cat[0];document.getElementById("crack").textContent="";document.getElementById("speech").textContent=p.cat[1]+"だよ。今日もよろしくにゃ♪"}else{egg.textContent=p.exp>=70?"🥚✨":"🥚";document.getElementById("crack").textContent=p.exp>=70?"⚡ ⚡":(p.exp>=40?"⚡":"")}}
+function renderPet(){const p=getPet();document.getElementById("totalPoints").textContent=p.totalPoints;document.getElementById("coins").textContent=p.coins;document.getElementById("expFill").style.width=p.exp+"%";document.getElementById("expText").textContent=p.exp+"/100";document.getElementById("happy").textContent=p.happy;document.getElementById("hunger").textContent=p.hunger;const pet=document.getElementById("petIcon");pet.className="pet";if(p.hatched&&p.cat){pet.textContent=p.cat[0];pet.classList.add("walk");document.getElementById("crack").textContent="";document.getElementById("mainMsg").innerHTML=p.cat[1]+"のおへや";speech(p.happy<40?"さみしかったにゃ…":p.hunger<40?"おなかすいたにゃ…":p.cat[1]+"だよ。今日もよろしくにゃ♪")}else{pet.textContent=p.exp>=70?"🥚✨":"🥚";document.getElementById("crack").textContent=p.exp>=70?"⚡ ⚡":(p.exp>=40?"⚡":"");document.getElementById("mainMsg").innerHTML="ふしぎなたまごから<br>かわいい子がうまれるよ"}}
+function renderRoom(){const p=getPet(), box=document.getElementById("roomItems");box.innerHTML="";shopItems.forEach(i=>{if(p.items.includes(i.id)){const d=document.createElement("div");d.className="floorItem "+i.cls;d.textContent=i.emoji;box.appendChild(d)}})}
 function renderSubjects(){const subjects=getSubjects(), daily=getDaily()[today()]||{}, box=document.getElementById("subjects");box.innerHTML=subjects.length?"":'<div class="empty">まだ科目がありません。「おすすめ科目を追加」から始めてね。</div>';subjects.forEach(s=>{const val=daily[s.id]||0, div=document.createElement("div");div.className="subject";div.innerHTML=`<div class="subjectTop"><div><div class="title">${s.name}</div><div class="meta">目標：${s.goal||"今日の目標"}</div></div><span class="pill">${val} pt</span></div><div class="points">${[0,1,2,3].map(n=>`<button class="${val===n?'selected':''}" onclick="setPoint(${s.id},${n})">${n===0?'0':"⭐".repeat(n)}</button>`).join("")}</div>`;box.appendChild(div)});const list=document.getElementById("subjectList");list.innerHTML=subjects.length?"":'<div class="empty">科目なし</div>';subjects.forEach(s=>{const div=document.createElement("div");div.className="subject";div.innerHTML=`<div class="subjectTop"><div><div class="title">${s.name}</div><div class="meta">${s.goal||""}</div></div><button class="secondary" onclick="removeSubject(${s.id})">削除</button></div>`;list.appendChild(div)})}
 function renderShop(){const p=getPet();[["shopGrid",shopItems,"shop"],["dressGrid",dressItems,"dress"]].forEach(([grid,items,type])=>{const box=document.getElementById(grid);box.innerHTML="";items.forEach(i=>{const owned=p.items.includes(i.id),div=document.createElement("div");div.className="item";div.innerHTML=`<span class="emoji">${i.emoji}</span><b>${i.name}</b><br><span class="price">🪙${i.price}</span><br>${owned?'<span class="owned">もってる</span>':`<button onclick="buyItem('${i.id}','${type}')">買う</button>`}`;box.appendChild(div)})})}
 function renderBook(){const p=getPet(), book=document.getElementById("bookGrid");book.innerHTML="";cats.forEach(c=>{const got=p.book.find(x=>x[1]===c[1]), div=document.createElement("div");div.className="item";div.innerHTML=`<span class="emoji">${got?c[0]:"❔"}</span><b>${got?c[1]:"？？？"}</b>`;book.appendChild(div)})}
-function render(){renderPet();renderSubjects();renderShop();renderBook()} render();
+function render(){renderPet();renderRoom();renderSubjects();renderShop();renderBook()} render();
 </script>
 </body>
 </html>
