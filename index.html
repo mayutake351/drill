@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット Ver0.7</title>
+<title>まこペット Ver0.8</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
   <h1>🐾 まこペット 🐾</h1>
-  <div class="sub">Ver0.7：見た目をかわいくして、3ファイル構成になったよ</div>
+  <div class="sub">Ver0.8：たまごが割れて、かわいい子が生まれるよ</div>
 
   <section id="home">
     <div class="card room" id="room">
@@ -97,18 +97,18 @@
   <section id="note" class="hidden">
     <div class="card devnote">
       <h2>📒 開発ノート</h2>
-      <h3>Ver0.7</h3>
+      <h3>Ver0.8</h3>
       <ul>
-        <li>index.html / style.css / app.js に分割</li>
-        <li>見た目を少しゲームっぽく改善</li>
-        <li>着せ替えの表示を少し反映</li>
-        <li>誕生時に画面演出を追加</li>
+        <li>誕生モーダルを強化</li>
+        <li>たまごがピシピシ割れる演出</li>
+        <li>生まれた猫に名前をつけられる</li>
+        <li>猫の表示を少し大きくかわいく</li>
       </ul>
       <h3>次に作る候補</h3>
       <ul>
-        <li>猫に名前をつける</li>
+        <li>猫の種類を増やす</li>
+        <li>猫に性格をつける</li>
         <li>家具を自由に配置</li>
-        <li>オリジナル画像の猫にする</li>
       </ul>
     </div>
   </section>
@@ -124,12 +124,14 @@
 </nav>
 
 <div id="birthModal" class="modal hidden">
-  <div class="modalCard">
+  <div class="modalCard birthCard">
     <div class="confetti">✨🎉✨</div>
-    <div class="bornCat" id="bornCat">🐱</div>
-    <h2>おめでとう！</h2>
-    <p id="bornText">かわいい子がうまれたよ！</p>
-    <button onclick="closeBirthModal()">OK</button>
+    <div id="birthEgg" class="birthEgg">🥚</div>
+    <div class="bornCat hidden" id="bornCat">🐱</div>
+    <h2 id="birthTitle">ピシッ…！</h2>
+    <p id="bornText">たまごが動いているよ…</p>
+    <input id="catNameInput" class="hidden" placeholder="名前をつけてね">
+    <button id="birthButton" onclick="nextBirthStep()">つづける</button>
   </div>
 </div>
 

@@ -1,6 +1,6 @@
-const SUBJECT_KEY="makopet_subjects_v3";
-const DAILY_KEY="makopet_daily_v3";
-const PET_KEY="makopet_pet_v3";
+const SUBJECT_KEY="makopet_subjects_v4";
+const DAILY_KEY="makopet_daily_v4";
+const PET_KEY="makopet_pet_v4";
 
 const cats=[
   ["🐱","しろねこ"],["🐈","みけねこ"],["🐈‍⬛","くろねこ"],["😺","ちゃとら"],
@@ -23,6 +23,9 @@ const dressItems=[
   {id:"wing",emoji:"🪽",name:"天使の羽",price:150}
 ];
 
+let pendingCat=null;
+let birthStep=0;
+
 function load(k,d){return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
 function today(){return new Date().toISOString().slice(0,10)}
@@ -31,7 +34,7 @@ function setSubjects(v){save(SUBJECT_KEY,v)}
 function getDaily(){let d=load(DAILY_KEY,{}); if(!d[today()])d[today()]={}; return d}
 function setDaily(v){save(DAILY_KEY,v)}
 function getPet(){
-  let p=load(PET_KEY,{exp:0,totalPoints:0,coins:0,hatched:false,cat:null,book:[],items:[],happy:100,hunger:100,last:today()});
+  let p=load(PET_KEY,{exp:0,totalPoints:0,coins:0,hatched:false,cat:null,catName:"",book:[],items:[],happy:100,hunger:100,last:today()});
   if(p.last!==today()){
     p.happy=Math.max(0,p.happy-15);
     p.hunger=Math.max(0,p.hunger-20);
@@ -57,8 +60,7 @@ function addDefaultSubjects(){
     {id:Date.now()+2,name:"算数ラボ",goal:"1ページ"},
     {id:Date.now()+3,name:"漢字ドリル",goal:"1ページ"}
   ].forEach(d=>{if(!s.find(x=>x.name===d.name))s.push(d)});
-  setSubjects(s);
-  render();
+  setSubjects(s); render();
 }
 
 function addSubject(){
@@ -100,10 +102,10 @@ function gain(point){
     p.exp-=100;
     if(!p.hatched){
       const cat=cats[Math.floor(Math.random()*cats.length)];
-      p.hatched=true;
-      p.cat=cat;
+      p.hatched=true; p.cat=cat; p.catName="";
       if(!p.book.find(x=>x[1]===cat[1]))p.book.push(cat);
-      showBirth(cat);
+      pendingCat=cat;
+      startBirth(cat);
     }else{
       p.coins+=5;
     }
@@ -111,26 +113,60 @@ function gain(point){
   setPet(p);
 }
 
-function showBirth(cat){
-  document.getElementById("bornCat").textContent=cat[0];
-  document.getElementById("bornText").textContent=cat[1]+"がうまれたよ！";
+function startBirth(cat){
+  birthStep=0;
   document.getElementById("birthModal").classList.remove("hidden");
+  document.getElementById("birthEgg").classList.remove("hidden","cracking");
+  document.getElementById("bornCat").classList.add("hidden");
+  document.getElementById("catNameInput").classList.add("hidden");
+  document.getElementById("catNameInput").value="";
+  document.getElementById("birthTitle").textContent="ピシッ…！";
+  document.getElementById("bornText").textContent="たまごが動いているよ…";
+  document.getElementById("birthButton").textContent="つづける";
 }
+
+function nextBirthStep(){
+  const egg=document.getElementById("birthEgg");
+  const born=document.getElementById("bornCat");
+  const input=document.getElementById("catNameInput");
+
+  if(birthStep===0){
+    egg.classList.add("cracking");
+    document.getElementById("birthTitle").textContent="ピシピシ…！";
+    document.getElementById("bornText").textContent="もうすぐ生まれそう！";
+    birthStep++;
+    return;
+  }
+  if(birthStep===1){
+    egg.classList.add("hidden");
+    born.textContent=pendingCat[0];
+    born.classList.remove("hidden");
+    document.getElementById("birthTitle").textContent="おめでとう！";
+    document.getElementById("bornText").textContent=pendingCat[1]+"がうまれたよ！";
+    input.classList.remove("hidden");
+    document.getElementById("birthButton").textContent="名前を決める";
+    birthStep++;
+    return;
+  }
+  const name=input.value.trim();
+  if(name){
+    const p=getPet();
+    p.catName=name;
+    setPet(p);
+  }
+  closeBirthModal();
+}
+
 function closeBirthModal(){
   document.getElementById("birthModal").classList.add("hidden");
+  pendingCat=null;
   render();
 }
 
 function useFood(){
   const p=getPet();
-  if(p.totalPoints<10){
-    speech("あと少しでごはんをあげられるよ♪");
-    return;
-  }
-  p.totalPoints-=10;
-  p.coins+=3;
-  p.exp+=15;
-  p.hunger=Math.min(100,p.hunger+35);
+  if(p.totalPoints<10){speech("あと少しでごはんをあげられるよ♪");return}
+  p.totalPoints-=10; p.coins+=3; p.exp+=15; p.hunger=Math.min(100,p.hunger+35);
   setPet(p);
   speech(p.hatched?"もぐもぐ。おいしいにゃ！":"たまごがぽかぽかしてきたよ！");
   render();
@@ -153,8 +189,9 @@ function tapPet(){
   void pet.offsetWidth;
   pet.classList.add("bump");
   const p=getPet();
+  const displayName=p.catName||p.cat?.[1]||"";
   const phrases=p.hatched
-    ? ["なでなでうれしいにゃ","おかえり！","今日も会えてうれしいにゃ","遊ぼうにゃ♪"]
+    ? ["なでなでうれしいにゃ","おかえり！",displayName+"に会いにきてくれてうれしいにゃ","遊ぼうにゃ♪"]
     : ["ぽかぽか…♪","なにが生まれるかな？","もう少しでヒビが入りそう！"];
   speech(phrases[Math.floor(Math.random()*phrases.length)]);
 }
@@ -165,18 +202,12 @@ function buyItem(id,type){
   const p=getPet();
   if(p.items.includes(id))return;
   if(p.coins<item.price){alert("コインが足りないよ");return}
-  p.coins-=item.price;
-  p.items.push(id);
-  setPet(p);
-  render();
+  p.coins-=item.price; p.items.push(id); setPet(p); render();
 }
 
 function resetToday(){
   if(confirm("今日のポイントをリセットする？")){
-    const d=getDaily();
-    d[today()]={};
-    setDaily(d);
-    render();
+    const d=getDaily(); d[today()]={}; setDaily(d); render();
   }
 }
 
@@ -196,14 +227,15 @@ function renderPet(){
     pet.textContent=p.cat[0];
     pet.classList.add("walk");
     document.getElementById("crack").textContent="";
-    document.getElementById("mainMsg").innerHTML=p.cat[1]+"のおへや";
-    speech(p.happy<40?"さみしかったにゃ…":p.hunger<40?"おなかすいたにゃ…":p.cat[1]+"だよ。今日もよろしくにゃ♪");
+    const displayName=p.catName||p.cat[1];
+    document.getElementById("mainMsg").innerHTML=displayName+"のおへや";
+    speech(p.happy<40?"さみしかったにゃ…":p.hunger<40?"おなかすいたにゃ…":displayName+"だよ。今日もよろしくにゃ♪");
   }else{
     pet.textContent=p.exp>=70?"🥚✨":"🥚";
+    if(p.exp>=70) pet.classList.add("hatchGlow");
     document.getElementById("crack").textContent=p.exp>=70?"⚡ ⚡":(p.exp>=40?"⚡":"");
     document.getElementById("mainMsg").innerHTML="ふしぎなたまごから<br>かわいい子がうまれるよ";
   }
-
   renderDressLayers(p);
 }
 
@@ -243,15 +275,10 @@ function renderSubjects(){
     div.className="subject";
     div.innerHTML=`
       <div class="subjectTop">
-        <div>
-          <div class="title">${s.name}</div>
-          <div class="meta">目標：${s.goal||"今日の目標"}</div>
-        </div>
+        <div><div class="title">${s.name}</div><div class="meta">目標：${s.goal||"今日の目標"}</div></div>
         <span class="pill">${val} pt</span>
       </div>
-      <div class="points">
-        ${[0,1,2,3].map(n=>`<button class="${val===n?'selected':''}" onclick="setPoint(${s.id},${n})">${n===0?'0':"⭐".repeat(n)}</button>`).join("")}
-      </div>`;
+      <div class="points">${[0,1,2,3].map(n=>`<button class="${val===n?'selected':''}" onclick="setPoint(${s.id},${n})">${n===0?'0':"⭐".repeat(n)}</button>`).join("")}</div>`;
     box.appendChild(div);
   });
 
@@ -293,12 +320,5 @@ function renderBook(){
   });
 }
 
-function render(){
-  renderPet();
-  renderRoom();
-  renderSubjects();
-  renderShop();
-  renderBook();
-}
-
+function render(){renderPet();renderRoom();renderSubjects();renderShop();renderBook();}
 render();
