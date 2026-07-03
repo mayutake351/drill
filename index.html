@@ -3,30 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット</title>
+<title>まこペット ホーム</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
-  <section id="start" class="screen">
-    <img src="start_screen.png" class="bg" alt="たまご選択">
-    <button class="eggBtn sky" onclick="chooseEgg('そらいろのたまご')"></button>
-    <button class="eggBtn heart" onclick="chooseEgg('ハートのたまご')"></button>
-    <button class="eggBtn cat" onclick="chooseEgg('ねこのたまご')"></button>
-  </section>
+<main class="app">
+  <section class="home">
+    <header class="top">
+      <div class="pointBox">
+        <span>今日のポイント</span>
+        <b><span id="points">25</span>pt</b>
+      </div>
+      <div class="bellyBox">
+        <div class="bellyTitle">🍙 おなか <b><span id="belly">45</span>/50</b></div>
+        <div class="bar"><span id="barFill"></span></div>
+        <div class="next" id="nextText">あと5ptであかちゃん！</div>
+      </div>
+      <button class="iconBtn">⚙️</button>
+    </header>
 
-  <section id="home" class="home hidden">
-    <div class="homeCard">
-      <h1>🌸 まこペット 🌸</h1>
-      <p id="msg">たまごをおうちにつれて帰ったよ！</p>
-      <div id="egg" class="bigEgg">🥚</div>
-      <div class="bar"><span id="fill"></span></div>
-      <p>🍙 おなか <span id="belly">0</span>/50</p>
-      <p>⭐ ポイント <span id="points">0</span>pt</p>
-      <button onclick="study()">📚 勉強した！ +5pt</button>
-      <button onclick="feed()">🍙 ごはんをあげる 5pt</button>
-      <button onclick="resetAll()" class="sub">最初から</button>
-    </div>
+    <section class="room">
+      <div class="window"><div class="sun"></div></div>
+      <div class="curtain left"></div><div class="curtain right"></div>
+      <div class="shelf">📚 🧸 🌸</div>
+
+      <div class="backPets">
+        <div class="backPet p1">🐉<small>すや…</small></div>
+        <div class="backPet p2">🐱<small>ごろごろ</small></div>
+        <div class="backPet p3">🐶<small>zzz</small></div>
+      </div>
+
+      <aside class="tasks">
+        <h2>きょうのやること</h2>
+        <div class="catBlock">
+          <h3>📗 こくご</h3>
+          <div class="task">Z会 エブリスタディ <div class="pts"></div></div>
+          <div class="task">漢字ドリル <div class="pts"></div></div>
+          <div class="task">読書 <div class="pts"></div></div>
+        </div>
+        <div class="catBlock">
+          <h3>🔢 さんすう</h3>
+          <div class="task">算数ラボ <div class="pts"></div></div>
+          <div class="task">計算ドリル <div class="pts"></div></div>
+        </div>
+        <button class="add">＋ やること追加</button>
+      </aside>
+
+      <div class="speech" id="speech">ごはんをあげてね♪</div>
+      <div class="mainPet" onclick="pet()">🥚</div>
+      <div id="heart" class="heart hidden">💕</div>
+      <div class="bowl">🥣</div>
+
+      <nav class="side">
+        <button onclick="feed()">🍙<span>ごはん</span></button>
+        <button>🎀<span>きせかえ</span></button>
+        <button>🪑<span>家具</span></button>
+        <button>📖<span>図鑑</span></button>
+      </nav>
+    </section>
+
+    <nav class="bottom">
+      <button class="active">🏠<br>ホーム</button>
+      <button>🍙<br>ごはん</button>
+      <button>🌳<br>さがす</button>
+      <button>🛒<br>ショップ</button>
+      <button>📖<br>アルバム</button>
+    </nav>
   </section>
 </main>
 <script src="app.js"></script>

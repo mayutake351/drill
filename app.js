@@ -1,9 +1,8 @@
-const KEY='makopet_pretty_start';
-let state=JSON.parse(localStorage.getItem(KEY)||'null')||{started:false,egg:'',points:0,belly:0};
-function save(){localStorage.setItem(KEY,JSON.stringify(state))}
-function chooseEgg(name){state.started=true;state.egg=name;state.points=0;state.belly=0;save();render()}
-function render(){document.getElementById('start').classList.toggle('hidden',state.started);document.getElementById('home').classList.toggle('hidden',!state.started);if(!state.started)return;document.getElementById('msg').textContent=state.egg+'をおうちにつれて帰ったよ！';document.getElementById('points').textContent=state.points;document.getElementById('belly').textContent=state.belly;document.getElementById('fill').style.width=Math.min(100,state.belly/50*100)+'%';document.getElementById('egg').textContent=state.belly>=50?'🐣':'🥚';if(state.belly>=50)document.getElementById('msg').textContent='あかちゃんが生まれたよ！'}
-function study(){state.points+=5;save();render()}
-function feed(){if(state.points<5){alert('ポイントが足りないよ');return}state.points-=5;state.belly=Math.min(50,state.belly+5);save();render()}
-function resetAll(){localStorage.removeItem(KEY);state={started:false,egg:'',points:0,belly:0};render()}
-render();
+let points=25, belly=45;
+document.querySelectorAll('.pts').forEach(box=>{[0,1,2,3,4,5].forEach(n=>{let b=document.createElement('button');b.textContent=n;b.onclick=()=>{box.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');points+=n;update();say(n===5?'すごい！5ポイント！':'がんばったね♡')};box.appendChild(b)})});
+function update(){document.getElementById('points').textContent=points;document.getElementById('belly').textContent=belly;document.getElementById('barFill').style.width=(belly/50*100)+'%';document.getElementById('nextText').textContent=belly>=50?'レベルアップできるよ！':'あと'+(50-belly)+'ptであかちゃん！'}
+function say(t){document.getElementById('speech').textContent=t}
+function heart(){let h=document.getElementById('heart');h.classList.remove('hidden');void h.offsetWidth;setTimeout(()=>h.classList.add('hidden'),950)}
+function pet(){say('なでてくれてうれしい♡');heart()}
+function feed(){if(points<5){say('ポイントが足りないよ');return}points-=5;belly=Math.min(50,belly+5);say('もぐもぐ♪ おなかいっぱい！');heart();update()}
+update();
