@@ -3,49 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット はじまりのたまご</title>
+<title>まこペット</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<section id="start" class="screen">
-  <div class="card">
-    <h1>🌸 まこペット 🌸</h1>
-    <p class="lead">どのたまごを<br>おうちへつれて帰る？</p>
-    <div class="eggs">
-      <button class="egg" onclick="chooseEgg('sky')"><div class="eggPic sky">☁️</div><b>そらいろのたまご</b><small>やさしい子が生まれやすいよ</small></button>
-      <button class="egg" onclick="chooseEgg('heart')"><div class="eggPic heart">💖</div><b>ハートのたまご</b><small>あまえんぼうが多いかも</small></button>
-      <button class="egg" onclick="chooseEgg('cat')"><div class="eggPic cat">🐱</div><b>ねこのたまご</b><small>ねこ系が生まれやすいよ</small></button>
-    </div>
-    <p class="note">どれを選んでも正解！中から生まれる子はお楽しみ♪</p>
-  </div>
-</section>
+<main>
+  <section id="start" class="screen">
+    <img src="start_screen.png" class="bg" alt="たまご選択">
+    <button class="eggBtn sky" onclick="chooseEgg('そらいろのたまご')"></button>
+    <button class="eggBtn heart" onclick="chooseEgg('ハートのたまご')"></button>
+    <button class="eggBtn cat" onclick="chooseEgg('ねこのたまご')"></button>
+  </section>
 
-<section id="home" class="screen hidden">
-  <div class="homeCard">
-    <h1>🏠 まこのおうち</h1>
-    <div class="room">
-      <div class="window"></div>
-      <div class="chosenEgg" id="chosenEgg">🥚</div>
-      <div class="speech" id="speech">今日からよろしくね♪</div>
+  <section id="home" class="home hidden">
+    <div class="homeCard">
+      <h1>🌸 まこペット 🌸</h1>
+      <p id="msg">たまごをおうちにつれて帰ったよ！</p>
+      <div id="egg" class="bigEgg">🥚</div>
+      <div class="bar"><span id="fill"></span></div>
+      <p>🍙 おなか <span id="belly">0</span>/50</p>
+      <p>⭐ ポイント <span id="points">0</span>pt</p>
+      <button onclick="study()">📚 勉強した！ +5pt</button>
+      <button onclick="feed()">🍙 ごはんをあげる 5pt</button>
+      <button onclick="resetAll()" class="sub">最初から</button>
     </div>
-    <div class="gaugeBox">
-      <div class="label">⭐ ポイント <span id="points">0</span>pt</div>
-      <div class="label">🍙 おなか <span id="belly">0</span>/50</div>
-      <div class="bar"><span id="bellyFill"></span></div>
-      <div class="next">あと <span id="left">50</span>pt で あかちゃん！</div>
-    </div>
-    <div class="tasks">
-      <h2>きょうのやること</h2>
-      <div id="taskList"></div>
-      <button onclick="addTask()">＋ やること追加</button>
-    </div>
-    <div class="actions">
-      <button onclick="feed(5)">🍎 りんご 5pt</button>
-      <button onclick="feed(10)">🍙 おにぎり 10pt</button>
-      <button class="sub" onclick="resetAll()">リセット</button>
-    </div>
-  </div>
-</section>
+  </section>
+</main>
 <script src="app.js"></script>
 </body>
 </html>
