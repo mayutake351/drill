@@ -1,1 +1,19 @@
-let points=25, belly=35;function update(){document.getElementById('points').textContent=points;document.getElementById('belly').textContent=belly;document.getElementById('fill').style.width=Math.min(100,belly/50*100)+'%';document.getElementById('next').textContent=belly>=50?'成長できるよ！':'あと'+(50-belly)+'ptで成長！'}function say(t){document.getElementById('bubble').textContent=t}function sparkle(){const s=document.getElementById('spark');s.classList.remove('hidden');void s.offsetWidth;setTimeout(()=>s.classList.add('hidden'),950)}function petTap(){const p=document.getElementById('pet');p.classList.add('jump');say('にこっ♪');sparkle();setTimeout(()=>p.classList.remove('jump'),550)}function openFood(){document.getElementById('foodModal').classList.remove('hidden')}function openDress(){document.getElementById('dressModal').classList.remove('hidden')}function closeModal(){document.getElementById('foodModal').classList.add('hidden');document.getElementById('dressModal').classList.add('hidden')}function feed(cost,name){if(points<cost){say('ポイントが足りないよ');closeModal();return}points-=cost;belly=Math.min(50,belly+Math.ceil(cost*.6));say(name==='たんじょうびケーキ'?'かわいさアップ！':'おいしい♪');petTap();closeModal();update()}function dress(item){if(item==='ribbon')document.getElementById('ribbon').textContent='🎀';if(item==='hat')document.getElementById('hat').textContent='👒';if(item==='crown')document.getElementById('hat').textContent='👑';if(item==='glasses')say('めがねをかけたよ♪');else say('きせかえしたよ♪');sparkle()}update();
+let toastTimer;
+function toast(text){
+  const t=document.getElementById('toast');
+  t.textContent=text;
+  t.classList.remove('hidden');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.add('hidden'),1400);
+}
+function petTap(){
+  const h=document.getElementById('hearts');
+  h.classList.remove('hidden');
+  void h.offsetWidth;
+  setTimeout(()=>h.classList.add('hidden'),900);
+  toast('にこっ♪');
+}
+function openPanel(id){document.getElementById(id).classList.remove('hidden')}
+function closePanels(){document.querySelectorAll('.modal').forEach(m=>m.classList.add('hidden'))}
+function feed(name){closePanels();toast(name==='たんじょうびケーキ'?'かわいさUP！':name+'を食べたよ♪')}
+function dress(name){closePanels();toast(name+'をつけたよ♪')}
