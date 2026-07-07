@@ -1,25 +1,90 @@
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:center;background:#fff1f7;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
-.phone{position:relative;height:100vh;max-height:1536px;aspect-ratio:1024/1536;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(160,70,120,.22)}
-.screen{width:100%;height:100%;object-fit:cover;display:block;user-select:none;pointer-events:none}
-.hot{position:absolute;border:0;background:transparent;cursor:pointer;border-radius:28px}
-.hot:hover{outline:3px solid rgba(255,120,170,.55);background:rgba(255,255,255,.10)}
-.pet{left:34%;top:37%;width:31%;height:25%}
-.food{left:22%;top:68%;width:26%;height:12%}
-.dress{left:52%;top:68%;width:25%;height:12%}
-.todo{left:3%;bottom:0;width:22%;height:10%}
-.shop{left:50%;bottom:0;width:23%;height:10%}
-.book{left:73%;bottom:0;width:24%;height:10%}
-.toast{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);background:white;border:3px solid #ffbdd8;color:#d94d8c;border-radius:999px;padding:14px 24px;font-size:24px;font-weight:900;box-shadow:0 10px 24px rgba(150,80,110,.2);z-index:20;white-space:nowrap}
-.hearts{position:absolute;left:38%;top:37%;color:#ff6fa5;font-size:42px;font-weight:900;animation:heart 1s forwards;z-index:20}
-@keyframes heart{to{opacity:0;transform:translateY(-80px) scale(1.25)}}
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff1f7;
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+}
+.phone{
+  position:relative;
+  height:100vh;
+  max-height:1536px;
+  aspect-ratio:1024/1536;
+  background:#fff;
+  overflow:hidden;
+  box-shadow:0 18px 50px rgba(160,70,120,.22);
+}
+.screen{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  pointer-events:none;
+  user-select:none;
+}
+.hot{
+  position:absolute;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  border-radius:22px;
+}
+.hot:hover{
+  outline:3px solid rgba(255,120,170,.55);
+  background:rgba(255,255,255,.12);
+}
+.tabFood{left:9%;top:9%;width:38%;height:6%}
+.tabDress{left:50%;top:9%;width:38%;height:6%}
+.buyFood1{left:5%;top:23%;width:20%;height:14%}
+.buyFood2{left:27%;top:23%;width:20%;height:14%}
+.buyFood3{left:50%;top:23%;width:20%;height:14%}
+.buyFood4{left:72%;top:23%;width:20%;height:14%}
+.buyDress1{left:5%;top:56%;width:14%;height:12%}
+.buyDress2{left:20%;top:56%;width:14%;height:12%}
+.buyDress3{left:36%;top:56%;width:14%;height:12%}
+.buyDress4{left:51%;top:56%;width:14%;height:12%}
+.buyDress5{left:66%;top:56%;width:14%;height:12%}
+.buyDress6{left:81%;top:56%;width:14%;height:12%}
+.navTodo{left:3%;bottom:0;width:24%;height:8%}
+.navRoom{left:28%;bottom:0;width:24%;height:8%}
+.navBook{left:76%;bottom:0;width:22%;height:8%}
+.toast{
+  position:absolute;
+  left:50%;
+  bottom:10%;
+  transform:translateX(-50%);
+  background:white;
+  border:3px solid #ffbdd8;
+  color:#d94d8c;
+  border-radius:999px;
+  padding:14px 24px;
+  font-weight:900;
+  font-size:22px;
+  z-index:20;
+  box-shadow:0 10px 24px rgba(150,80,110,.2);
+  white-space:nowrap;
+}
 .hidden{display:none!important}
-.modal{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:22px;background:rgba(60,30,45,.30);z-index:30}
-.panel{width:100%;background:#fffafc;border:4px solid #ffbdd8;border-radius:34px;padding:24px 18px 20px;box-shadow:0 18px 44px rgba(80,40,60,.28);position:relative}
-.panel h2{margin:0 0 18px;color:#d94d8c;text-align:center;font-size:32px}
-.close{position:absolute;right:18px;top:14px;width:44px;height:44px;border:0;border-radius:50%;background:#ff6fa5;color:white;font-size:30px;font-weight:900}
-.items{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.items button{min-height:78px;border:3px solid #ffd3e4;border-radius:22px;background:linear-gradient(#fff,#fff7fb);color:#6b3d32;font-weight:900;font-size:20px;box-shadow:0 6px 14px rgba(160,70,120,.10)}
-.items span{display:block;margin-top:6px;color:#e75f99;font-size:15px}
-.items .special{grid-column:1/3;background:linear-gradient(#fff4fa,#ffe7f2);border-color:#ff86b7}
-@media(max-width:600px){.phone{width:100vw;height:100vh;aspect-ratio:auto}.toast{font-size:18px}.panel h2{font-size:26px}}
+.statePanel{
+  position:absolute;
+  left:5%;
+  right:5%;
+  top:82%;
+  background:rgba(255,255,255,.92);
+  border:3px solid #ffd3e4;
+  border-radius:22px;
+  padding:12px 16px;
+  font-size:16px;
+  color:#6b3d32;
+  box-shadow:0 8px 18px rgba(160,70,120,.12);
+}
+.statePanel b{color:#d94d8c}
+#ownedText{margin-top:4px;line-height:1.5}
+@media(max-width:600px){
+  .phone{width:100vw;height:100vh;aspect-ratio:auto}
+  .toast{font-size:17px}
+  .statePanel{font-size:13px}
+}

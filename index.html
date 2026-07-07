@@ -3,52 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット おへや</title>
+<title>まこペット ショップ</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="phone">
-  <img src="room_screen.png" class="screen" alt="まこペット おへや">
+  <img src="shop_screen.png" class="screen" alt="まこペット ショップ">
 
-  <button class="hot pet" onclick="petTap()" aria-label="ペット"></button>
-  <button class="hot food" onclick="openPanel('foodPanel')" aria-label="ごはん"></button>
-  <button class="hot dress" onclick="openPanel('dressPanel')" aria-label="きせかえ"></button>
-  <button class="hot todo" onclick="toast('やること画面へ')"></button>
-  <button class="hot shop" onclick="toast('ショップ画面へ')"></button>
-  <button class="hot book" onclick="toast('ずかん画面へ')"></button>
+  <button class="hot tabFood" onclick="toast('ごはんコーナー')"></button>
+  <button class="hot tabDress" onclick="toast('きせかえコーナー')"></button>
+
+  <button class="hot buyFood1" onclick="buy('りんご',5,'food')"></button>
+  <button class="hot buyFood2" onclick="buy('おにぎり',10,'food')"></button>
+  <button class="hot buyFood3" onclick="buy('ドーナツ',20,'food')"></button>
+  <button class="hot buyFood4" onclick="buy('パンケーキ',30,'food')"></button>
+
+  <button class="hot buyDress1" onclick="buy('ピンクリボン',15,'dress')"></button>
+  <button class="hot buyDress2" onclick="buy('まるメガネ',15,'dress')"></button>
+  <button class="hot buyDress3" onclick="buy('あかいぼうし',20,'dress')"></button>
+  <button class="hot buyDress4" onclick="buy('天使のはね',30,'dress')"></button>
+  <button class="hot buyDress5" onclick="buy('ピンクのワンピ',25,'dress')"></button>
+  <button class="hot buyDress6" onclick="buy('ハートバッグ',20,'dress')"></button>
+
+  <button class="hot navTodo" onclick="toast('やることへ')"></button>
+  <button class="hot navRoom" onclick="toast('おへやへ')"></button>
+  <button class="hot navBook" onclick="toast('ずかんへ')"></button>
 
   <div id="toast" class="toast hidden"></div>
-  <div id="hearts" class="hearts hidden">♡ ♡ ♡</div>
 
-  <div id="foodPanel" class="modal hidden">
-    <div class="panel">
-      <button class="close" onclick="closePanels()">×</button>
-      <h2>ごはんをあげる</h2>
-      <div class="items">
-        <button onclick="feed('りんご')">りんご<span>5pt</span></button>
-        <button onclick="feed('おにぎり')">おにぎり<span>10pt</span></button>
-        <button onclick="feed('サンドイッチ')">サンドイッチ<span>15pt</span></button>
-        <button onclick="feed('ドーナツ')">ドーナツ<span>20pt</span></button>
-        <button onclick="feed('おさかな')">おさかな<span>25pt</span></button>
-        <button onclick="feed('ステーキ')">ステーキ<span>35pt</span></button>
-        <button class="special" onclick="feed('たんじょうびケーキ')">たんじょうびケーキ<span>50pt / かわいさUP</span></button>
-      </div>
-    </div>
-  </div>
-
-  <div id="dressPanel" class="modal hidden">
-    <div class="panel">
-      <button class="close" onclick="closePanels()">×</button>
-      <h2>きせかえ</h2>
-      <div class="items">
-        <button onclick="dress('リボン')">リボン<span>30pt</span></button>
-        <button onclick="dress('めがね')">めがね<span>30pt</span></button>
-        <button onclick="dress('ぼうし')">ぼうし<span>40pt</span></button>
-        <button onclick="dress('ワンピース')">ワンピース<span>60pt</span></button>
-        <button onclick="dress('バッグ')">バッグ<span>50pt</span></button>
-        <button onclick="dress('はね')">はね<span>80pt</span></button>
-      </div>
-    </div>
+  <div id="statePanel" class="statePanel">
+    <b>購入メモ</b>
+    <div id="ownedText">まだ何も買っていません</div>
   </div>
 </div>
 <script src="app.js"></script>
