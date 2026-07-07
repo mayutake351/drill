@@ -10,31 +10,24 @@
 <div class="phone">
   <img src="shop_screen.png" class="screen" alt="まこペット ショップ">
 
-  <button class="hot tabFood" onclick="toast('ごはんコーナー')"></button>
-  <button class="hot tabDress" onclick="toast('きせかえコーナー')"></button>
+  <button class="hot f1" onclick="buyFood('おにぎり',10)"></button>
+  <button class="hot f2" onclick="buyFood('りんご',5)"></button>
+  <button class="hot f3" onclick="buyFood('ドーナツ',20)"></button>
+  <button class="hot f4" onclick="buyFood('パンケーキ',30)"></button>
 
-  <button class="hot buyFood1" onclick="buy('りんご',5,'food')"></button>
-  <button class="hot buyFood2" onclick="buy('おにぎり',10,'food')"></button>
-  <button class="hot buyFood3" onclick="buy('ドーナツ',20,'food')"></button>
-  <button class="hot buyFood4" onclick="buy('パンケーキ',30,'food')"></button>
-
-  <button class="hot buyDress1" onclick="buy('ピンクリボン',15,'dress')"></button>
-  <button class="hot buyDress2" onclick="buy('まるメガネ',15,'dress')"></button>
-  <button class="hot buyDress3" onclick="buy('あかいぼうし',20,'dress')"></button>
-  <button class="hot buyDress4" onclick="buy('天使のはね',30,'dress')"></button>
-  <button class="hot buyDress5" onclick="buy('ピンクのワンピ',25,'dress')"></button>
-  <button class="hot buyDress6" onclick="buy('ハートバッグ',20,'dress')"></button>
+  <button class="hot d1" onclick="buyDress('ピンクリボン',15)"></button>
+  <button class="hot d2" onclick="buyDress('まるメガネ',15)"></button>
+  <button class="hot d3" onclick="buyDress('あかいぼうし',20)"></button>
+  <button class="hot d4" onclick="buyDress('天使のはね',30)"></button>
+  <button class="hot d5" onclick="buyDress('ピンクのワンピ',25)"></button>
+  <button class="hot d6" onclick="buyDress('ハートバッグ',20)"></button>
 
   <button class="hot navTodo" onclick="toast('やることへ')"></button>
   <button class="hot navRoom" onclick="toast('おへやへ')"></button>
+  <button class="hot navShop" onclick="toast('ショップ')"></button>
   <button class="hot navBook" onclick="toast('ずかんへ')"></button>
 
   <div id="toast" class="toast hidden"></div>
-
-  <div id="statePanel" class="statePanel">
-    <b>購入メモ</b>
-    <div id="ownedText">まだ何も買っていません</div>
-  </div>
 </div>
 <script src="app.js"></script>
 </body>
