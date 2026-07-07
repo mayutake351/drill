@@ -1,34 +1,10 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>まこペット ショップ</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>まこペット 統合版</title><link rel="stylesheet" href="style.css"></head><body>
 <div class="phone">
-  <img src="shop_screen.png" class="screen" alt="まこペット ショップ">
-
-  <button class="hot f1" onclick="buyFood('おにぎり',10)"></button>
-  <button class="hot f2" onclick="buyFood('りんご',5)"></button>
-  <button class="hot f3" onclick="buyFood('ドーナツ',20)"></button>
-  <button class="hot f4" onclick="buyFood('パンケーキ',30)"></button>
-
-  <button class="hot d1" onclick="buyDress('ピンクリボン',15)"></button>
-  <button class="hot d2" onclick="buyDress('まるメガネ',15)"></button>
-  <button class="hot d3" onclick="buyDress('あかいぼうし',20)"></button>
-  <button class="hot d4" onclick="buyDress('天使のはね',30)"></button>
-  <button class="hot d5" onclick="buyDress('ピンクのワンピ',25)"></button>
-  <button class="hot d6" onclick="buyDress('ハートバッグ',20)"></button>
-
-  <button class="hot navTodo" onclick="toast('やることへ')"></button>
-  <button class="hot navRoom" onclick="toast('おへやへ')"></button>
-  <button class="hot navShop" onclick="toast('ショップ')"></button>
-  <button class="hot navBook" onclick="toast('ずかんへ')"></button>
-
-  <div id="toast" class="toast hidden"></div>
-</div>
-<script src="app.js"></script>
-</body>
-</html>
+<section id="todo" class="page active"><img src="todo.png" class="screen"><button class="hot todoEdit" onclick="toast('編集画面は次に作るよ')"></button><button class="hot p1" onclick="score(3)"></button><button class="hot p2" onclick="score(2)"></button><button class="hot p3" onclick="score(2)"></button><button class="hot p4" onclick="score(4)"></button><button class="hot p5" onclick="score(1)"></button><button class="hot p6" onclick="score(2)"></button></section>
+<section id="room" class="page"><img src="room.png" class="screen"><button class="hot roomPet" onclick="petTap()"></button><button class="hot roomFood" onclick="openInventory('food')"></button><button class="hot roomDress" onclick="openInventory('dress')"></button></section>
+<section id="shop" class="page"><img src="shop.png" class="screen"><button class="hot f1" onclick="buyFood('おにぎり',10)"></button><button class="hot f2" onclick="buyFood('りんご',5)"></button><button class="hot f3" onclick="buyFood('ドーナツ',20)"></button><button class="hot f4" onclick="buyFood('パンケーキ',30)"></button><button class="hot d1" onclick="buyDress('ピンクリボン',15)"></button><button class="hot d2" onclick="buyDress('まるメガネ',15)"></button><button class="hot d3" onclick="buyDress('あかいぼうし',20)"></button><button class="hot d4" onclick="buyDress('天使のはね',30)"></button><button class="hot d5" onclick="buyDress('ピンクのワンピ',25)"></button><button class="hot d6" onclick="buyDress('ハートバッグ',20)"></button></section>
+<section id="book" class="page"><img src="book.png" class="screen contain"></section>
+<nav class="bottomNav"><button onclick="showPage('todo')" id="nav-todo" class="on">📚<br>やること</button><button onclick="showPage('room')" id="nav-room">🏠<br>おへや</button><button onclick="showPage('shop')" id="nav-shop">🛒<br>ショップ</button><button onclick="showPage('book')" id="nav-book">📖<br>ずかん</button></nav>
+<div class="hud"><span>⭐ <b id="points">25</b>pt</span><span id="bellyHud">おなか <b id="belly">32</b>/50</span></div><div id="toast" class="toast hidden"></div>
+<div id="inventoryModal" class="modal hidden"><div class="panel"><button class="close" onclick="closeModal()">×</button><h2 id="modalTitle">もちもの</h2><div id="modalItems" class="modalItems"></div></div></div>
+</div><script src="app.js"></script></body></html>
