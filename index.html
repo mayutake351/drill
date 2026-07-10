@@ -1,10 +1,101 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>まこペット</title><link rel="stylesheet" href="./style.css?v=5"></head><body><div class="phone">
-<section id="todo" class="page active"><header class="todoHeader"><h1>やること</h1><button class="addMain" id="addMainBtn">＋ 教材</button></header><div class="summary"><div><small>今日のポイント</small><b><span id="todayPoints">0</span> / <span id="dailyGoal">25</span> pt</b></div><div><small>もってるポイント</small><b>⭐ <span id="pointsTop">25</span> pt</b></div></div><div id="taskList" class="taskList"></div></section>
-<section id="room" class="page imagePage"><img src="./room.png" class="screen" alt="おへや"><button class="hot pet" id="petBtn"></button><button class="hot roomFood" id="roomFoodBtn"></button><button class="hot roomDress" id="roomDressBtn"></button></section>
-<section id="shop" class="page imagePage"><img src="./shop.png" class="screen" alt="ショップ"><button class="hot f1" data-food="おにぎり" data-cost="10" data-value="15"></button><button class="hot f2" data-food="りんご" data-cost="5" data-value="10"></button><button class="hot f3" data-food="ドーナツ" data-cost="20" data-value="25"></button><button class="hot f4" data-food="パンケーキ" data-cost="30" data-value="30"></button><button class="hot d1" data-dress="ピンクリボン" data-cost="15"></button><button class="hot d2" data-dress="まるメガネ" data-cost="15"></button><button class="hot d3" data-dress="あかいぼうし" data-cost="20"></button><button class="hot d4" data-dress="天使のはね" data-cost="30"></button><button class="hot d5" data-dress="ピンクのワンピ" data-cost="25"></button><button class="hot d6" data-dress="ハートバッグ" data-cost="20"></button></section>
-<section id="book" class="page imagePage"><img src="./book.png" class="screen contain" alt="ずかん"></section>
-<nav class="bottomNav"><button data-page="todo" id="nav-todo" class="on">📚<br>やること</button><button data-page="room" id="nav-room">🏠<br>おへや</button><button data-page="shop" id="nav-shop">🛒<br>ショップ</button><button data-page="book" id="nav-book">📖<br>ずかん</button></nav>
-<div id="roomHud" class="roomHud hidden"><span>⭐ <b id="pointsHud">25</b>pt</span><span>おなか <b id="bellyHud">32</b>/50</span></div><div id="toast" class="toast hidden"></div>
-<div id="itemModal" class="modal hidden"><div class="panel"><button class="close" id="closeItemModal">×</button><h2 id="itemModalTitle">もちもの</h2><div id="itemModalBody" class="modalBody"></div></div></div>
-<div id="taskEditor" class="modal hidden"><div class="panel editorPanel"><button class="close" id="closeTaskEditor">×</button><h2 id="editorTitle">教材を追加</h2><input type="hidden" id="editId"><label>科目</label><select id="subjectInput"><option>こくご</option><option>さんすう</option><option>かんじ</option><option>けいさん</option><option>えいご</option><option>そのた</option></select><label>ドリル名</label><input id="nameInput" placeholder="例：Z会 エブリスタディ"><label>進捗</label><div class="row"><input id="nowInput" type="number" min="0" value="0"><span>/</span><input id="totalInput" type="number" min="1" value="30"></div><label>優先度</label><select id="priorityInput"><option>高</option><option>中</option><option>低</option></select><label>期限</label><input id="dateInput" type="date"><button class="saveBtn" id="saveTaskBtn">保存</button><button id="deleteBtn" class="deleteBtn hidden">削除</button></div></div>
-</div><script src="./app.js?v=5"></script></body></html>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>まこペット</title>
+<link rel="stylesheet" href="./style.css?v=7">
+</head>
+<body>
+<div class="phone">
+  <section id="todo" class="page active">
+    <header class="todoHeader">
+      <h1>やること</h1>
+      <button class="addMain" id="addMainBtn">＋ 教材</button>
+    </header>
+    <div class="summary">
+      <div><small>今日のポイント</small><b><span id="todayPoints">0</span> / <span id="dailyGoal">25</span> pt</b></div>
+      <div><small>もってるポイント</small><b>⭐ <span id="pointsTop">25</span> pt</b></div>
+    </div>
+    <div id="taskList" class="taskList"></div>
+  </section>
+
+  <section id="room" class="page imagePage roomPage">
+    <img src="./room.png" class="screen" alt="おへや">
+    <div id="wearLayer" class="wearLayer">
+      <span id="wearRibbon" class="wearItem ribbon hidden">🎀</span>
+      <span id="wearGlasses" class="wearItem glasses hidden">👓</span>
+      <span id="wearHat" class="wearItem hat hidden">👒</span>
+      <span id="wearWings" class="wearItem wings hidden">🪽</span>
+      <span id="wearBag" class="wearItem bag hidden">👜</span>
+      <span id="wearDress" class="wearItem dress hidden">👗</span>
+    </div>
+    <button class="hot pet" id="petBtn" aria-label="ペット"></button>
+    <button class="hot roomFood" id="roomFoodBtn" aria-label="ごはん"></button>
+    <button class="hot roomDress" id="roomDressBtn" aria-label="きせかえ"></button>
+  </section>
+
+  <section id="shop" class="page imagePage shopPage">
+    <img src="./shop.png" class="screen" alt="ショップ">
+    <button class="hot f1" data-food="おにぎり" data-cost="10" data-value="15"></button>
+    <button class="hot f2" data-food="りんご" data-cost="5" data-value="10"></button>
+    <button class="hot f3" data-food="ドーナツ" data-cost="20" data-value="25"></button>
+    <button class="hot f4" data-food="パンケーキ" data-cost="30" data-value="30"></button>
+    <button class="hot d1" data-dress="ピンクリボン" data-cost="15"></button>
+    <button class="hot d2" data-dress="まるメガネ" data-cost="15"></button>
+    <button class="hot d3" data-dress="あかいぼうし" data-cost="20"></button>
+    <button class="hot d4" data-dress="天使のはね" data-cost="30"></button>
+    <button class="hot d5" data-dress="ピンクのワンピ" data-cost="25"></button>
+    <button class="hot d6" data-dress="ハートバッグ" data-cost="20"></button>
+  </section>
+
+  <section id="book" class="page imagePage">
+    <img src="./book.png" class="screen contain" alt="ずかん">
+  </section>
+
+  <nav class="bottomNav">
+    <button data-page="todo" id="nav-todo" class="on">📚<br>やること</button>
+    <button data-page="room" id="nav-room">🏠<br>おへや</button>
+    <button data-page="shop" id="nav-shop">🛒<br>ショップ</button>
+    <button data-page="book" id="nav-book">📖<br>ずかん</button>
+  </nav>
+
+  <div id="roomHud" class="roomHud hidden">
+    <span>⭐ <b id="pointsHud">25</b>pt</span>
+    <span>おなか <b id="bellyHud">32</b>/50</span>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <div id="itemModal" class="modal hidden">
+    <div class="panel">
+      <button class="close" id="closeItemModal">×</button>
+      <h2 id="itemModalTitle">もちもの</h2>
+      <div id="itemModalBody" class="modalBody"></div>
+    </div>
+  </div>
+
+  <div id="taskEditor" class="modal hidden">
+    <div class="panel editorPanel">
+      <button class="close" id="closeTaskEditor">×</button>
+      <h2 id="editorTitle">教材を追加</h2>
+      <input type="hidden" id="editId">
+      <label>科目</label>
+      <select id="subjectInput">
+        <option>こくご</option><option>さんすう</option><option>かんじ</option>
+        <option>けいさん</option><option>えいご</option><option>そのた</option>
+      </select>
+      <label>ドリル名</label><input id="nameInput" placeholder="例：Z会 エブリスタディ">
+      <label>進捗</label>
+      <div class="row"><input id="nowInput" type="number" min="0" value="0"><span>/</span><input id="totalInput" type="number" min="1" value="30"></div>
+      <label>優先度</label>
+      <select id="priorityInput"><option>高</option><option>中</option><option>低</option></select>
+      <label>期限</label><input id="dateInput" type="date">
+      <button class="saveBtn" id="saveTaskBtn">保存</button>
+      <button id="deleteBtn" class="deleteBtn hidden">削除</button>
+    </div>
+  </div>
+</div>
+<script src="./app.js?v=7"></script>
+</body>
+</html>
