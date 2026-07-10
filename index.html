@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>まこペット</title>
-<link rel="stylesheet" href="./style.css?v=8">
+<link rel="stylesheet" href="./style.css?v=9">
 </head>
 <body>
 <div class="phone">
@@ -22,13 +22,13 @@
 
   <section id="room" class="page imagePage roomPage">
     <img src="./room.png" class="screen" alt="おへや">
-    <div id="wearLayer" class="wearLayer">
-      <span id="wearRibbon" class="wearItem ribbon hidden">🎀</span>
-      <span id="wearGlasses" class="wearItem glasses hidden">👓</span>
-      <span id="wearHat" class="wearItem hat hidden">👒</span>
-      <span id="wearWings" class="wearItem wings hidden">🪽</span>
-      <span id="wearBag" class="wearItem bag hidden">👜</span>
-      <span id="wearDress" class="wearItem dress hidden">👗</span>
+    <div id="wearLayer" class="wearLayer" aria-hidden="true">
+      <img id="wearWings" class="wearItem wings hidden" src="./accessories/wings.png" alt="">
+      <img id="wearDress" class="wearItem dress hidden" src="./accessories/dress.png" alt="">
+      <img id="wearBag" class="wearItem bag hidden" src="./accessories/bag.png" alt="">
+      <img id="wearRibbon" class="wearItem ribbon hidden" src="./accessories/ribbon.png" alt="">
+      <img id="wearGlasses" class="wearItem glasses hidden" src="./accessories/glasses.png" alt="">
+      <img id="wearHat" class="wearItem hat hidden" src="./accessories/hat.png" alt="">
     </div>
     <button class="hot pet" id="petBtn" aria-label="ペット"></button>
     <button class="hot roomFood" id="roomFoodBtn" aria-label="ごはん"></button>
@@ -96,6 +96,6 @@
     </div>
   </div>
 </div>
-<script src="./app.js?v=8"></script>
+<script src="./app.js?v=9"></script>
 </body>
 </html>
