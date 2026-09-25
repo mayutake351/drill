@@ -3,142 +3,154 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>まこペット</title>
-<link rel="stylesheet" href="./style.css?v=10">
+<meta name="theme-color" content="#fff7f2">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ctext y='32' font-size='32'%3E🐾%3C/text%3E%3C/svg%3E">
+<title>まこペット2</title>
+<link rel="stylesheet" href="./style.css?v=27">
 </head>
 <body>
 <div class="phone">
 
 <section id="todo" class="page active">
   <header class="todoHeader">
-    <h1>やること</h1>
-    <button class="addMain" id="addMainBtn">＋ 教材</button>
+    <div><p class="eyebrow">きみと、いっしょに。すこしずつ。</p><h1>まこペット<span class="brandVersion">2</span></h1></div>
+    <span class="brandPaw" aria-hidden="true">🐾</span>
   </header>
   <div class="summary">
-    <div><small>今日のポイント</small><b><span id="todayPoints">0</span> / <span id="dailyGoal">25</span> pt</b></div>
-    <div><small>もってるポイント</small><b>⭐ <span id="pointsTop">25</span> pt</b></div>
+    <div class="wallet"><small>もってるポイント</small><b>⭐ <span id="pointsTop">25</span><em> pt</em></b></div>
+    <div><small>きょうのがんばり</small><b><span id="todayPoints">0</span><em> / <span id="dailyGoal">25</span> pt</em></b><progress id="dailyProgress" value="0" max="25" aria-label="今日の目標までの進捗"></progress></div>
   </div>
+  <div class="petHero">
+    <p class="petSpeech" id="petSpeech">今日もいっしょに、がんばろう！</p>
+    <div class="petPortrait" id="heroPortrait" role="img" aria-label="おへやで待っている、きみの猫">
+      <div id="heroEggScene" class="heroEggScene hidden" aria-hidden="true"><div class="roomEgg"><span>✦</span><i></i><b>♡</b></div></div>
+      <div id="heroYoungScene" class="heroYoungScene hidden" aria-hidden="true"><div id="heroYoungCat" class="roomCat">
+        <svg id="heroYoungArtwork" class="catArtwork" xmlns="http://www.w3.org/2000/svg"><defs><mask id="heroYoungMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="1600"><path id="heroYoungClip" fill="white" stroke="black" stroke-width="18"/><path id="heroYoungCut" fill="black"/></mask></defs><image id="heroYoungImage" mask="url(#heroYoungMask)"/></svg>
+        <img id="heroYoungRibbon" class="roomWear roomRibbon hidden" alt=""><img id="heroYoungGlasses" class="roomWear roomGlasses hidden" src="./accessories/glasses.png" alt=""><img id="heroYoungHat" class="roomWear roomHat hidden" src="./accessories/hat.png" alt="">
+      </div></div>
+      <div class="heroScene" aria-hidden="true">
+        <img class="heroCat" src="./room.png" alt="">
+        <img id="heroRibbon" class="wearItem ribbon hidden" alt="">
+        <img id="heroGlasses" class="wearItem glasses hidden" src="./accessories/glasses.png" alt="">
+        <img id="heroHat" class="wearItem hat hidden" src="./accessories/hat.png" alt="">
+      </div>
+    </div>
+  </div>
+  <div class="tasksHeading"><div><h2>今日のやること</h2></div><button class="addMain" id="addMainBtn" aria-label="教材を追加">＋ 教材</button></div>
+  <p class="taskGuide" id="taskGuide">まずは、これからやってみよう。</p>
   <div id="taskList" class="taskList"></div>
 </section>
 
-<section id="room" class="page imagePage roomPage">
-  <img src="./room.png" class="screen" alt="おへや">
-  <div class="wearLayer" aria-hidden="true">
-    <img id="wearRibbon" class="wearItem ribbon hidden" alt="">
-    <img id="wearGlasses" class="wearItem glasses hidden" src="./accessories/glasses.png" alt="">
-    <img id="wearHat" class="wearItem hat hidden" src="./accessories/hat.png" alt="">
+<section id="room" class="page roomPage">
+  <header class="roomHeader"><div><p class="eyebrow">きみと育つ、小さな家族</p><h1>おへや</h1></div><div id="roomHud" class="roomWallet"><small>もってるポイント</small><b>⭐ <span id="pointsHud">25</span><small> pt</small></b></div></header>
+  <div class="roomPetTitle"><h2 id="petName">こむぎ</h2><span id="petStage" class="stageBadge">たまご</span></div>
+  <div id="roomScene" class="roomScene" data-stage="egg" role="img" aria-label="こむぎのおへや">
+    <p id="roomSpeech" class="roomSpeech">もうすぐ会えるね。</p>
+    <div id="roomCat" class="roomCat hidden" aria-hidden="true">
+      <svg id="adultArtwork" class="catArtwork" viewBox="280 365 500 620" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="catSilhouette"><path d="M350 523 Q365 425 389 397 Q404 384 477 462 Q529 459 570 481 Q668 430 688 452 Q705 480 666 593 Q682 652 650 702 L676 739 L689 753 Q684 684 713 672 Q757 655 761 708 Q779 839 669 895 Q667 947 607 960 L555 966 Q536 976 506 967 Q472 976 445 958 Q400 963 389 932 Q354 919 361 869 L387 778 Q383 751 399 730 Q317 701 324 647 L291 633 L323 628 Q328 568 350 523 Z"/></clipPath></defs>
+        <image href="./room.png" width="1024" height="1536" clip-path="url(#catSilhouette)"/>
+      </svg>
+      <svg id="youngArtwork" class="catArtwork hidden" xmlns="http://www.w3.org/2000/svg"><defs><mask id="roomYoungMask" maskUnits="userSpaceOnUse" x="0" y="0" width="1200" height="1600"><path id="roomYoungClip" fill="white" stroke="black" stroke-width="18"/><path id="roomYoungCut" fill="black"/></mask></defs><image id="roomYoungImage" mask="url(#roomYoungMask)"/></svg>
+      <img id="wearRibbon" class="roomWear roomRibbon hidden" alt="">
+      <img id="wearGlasses" class="roomWear roomGlasses hidden" src="./accessories/glasses.png" alt="">
+      <img id="wearHat" class="roomWear roomHat hidden" src="./accessories/hat.png" alt="">
+    </div>
+    <div id="roomEgg" class="roomEgg" aria-hidden="true"><span>✦</span><i></i><b>♡</b></div>
+    <span class="sceneFlower" aria-hidden="true">✿</span>
   </div>
-  <button class="roomAction foodAction" id="roomFoodBtn">ごはん</button>
-  <button class="roomAction dressAction" id="roomDressBtn">きせかえ</button>
+  <div class="careStatus"><div class="careLabel"><span id="bellyMood">♡ おなか</span><b><span id="bellyHud">32</span><small> / 50</small></b></div><progress id="bellyGauge" value="32" max="50" aria-label="おなかの満足度"></progress><p id="bellyMessage">ごはんで、にっこり。</p></div>
+  <div class="roomActions"><button class="careButton foodAction" id="roomFoodBtn"><span aria-hidden="true">🍚</span><b>ごはん</b><small>おなかも成長も</small></button><button class="careButton dressAction" id="roomDressBtn"><span aria-hidden="true">🎀</span><b>きせかえ</b><small>おしゃれしよう</small></button></div>
+  <section class="growthCard" aria-labelledby="growthTitle"><div class="growthHeader"><h2 id="growthTitle">🌱 せいちょう</h2><span id="growthTotal">0 EXP</span></div><p id="growthRemaining">あかちゃんまで あと10 EXP</p><progress id="growthGauge" value="0" max="10" aria-label="次の成長までの経験値"></progress><ol id="growthSteps" class="growthSteps"><li>たまご</li><li>あかちゃん</li><li>こねこ</li><li>おとな</li></ol><p class="growthHint">お勉強1ptで1 EXP。ごはんでも2 EXP！</p><button id="roomStudyBtn" class="studyLink">📚 今日のやることへ</button></section>
 </section>
 
-<section id="shop" class="page shopHtml">
+<section id="shop" class="page shopHtml" aria-labelledby="shopTitle">
   <header class="shopHeader">
-    <h1>ショップ</h1>
-    <div class="shopPoints">⭐ <span id="shopPoints">25</span> pt</div>
+    <p class="shopEyebrow">ねこに、とっておきのプレゼント</p>
+    <h1 id="shopTitle">ショップ</h1>
+    <div class="shopWallet"><span class="walletStar" aria-hidden="true">★</span><div><span>つかえるポイント</span><p><strong id="shopPoints">25</strong> <b>pt</b></p></div><span class="walletSpark" aria-hidden="true">✧</span></div>
   </header>
-  <div class="shopTabs">
-    <button class="active" data-tab="foodShop">ごはん</button>
-    <button data-tab="dressShop">きせかえ</button>
+  <div class="shopTabs" role="tablist" aria-label="商品の種類">
+    <button id="foodTab" role="tab" aria-selected="true" aria-controls="foodShop" data-tab="foodShop" class="active"><span aria-hidden="true">🍎</span> ごはん</button>
+    <button id="dressTab" role="tab" aria-selected="false" aria-controls="dressShop" tabindex="-1" data-tab="dressShop"><span aria-hidden="true">🎀</span> きせかえ</button>
   </div>
-
-  <div id="foodShop" class="shopPane active">
-    <div class="shopGrid">
-      <button class="shopCard" data-food="りんご" data-cost="5" data-value="10">
-        <span class="itemEmoji">🍎</span><b>りんご</b><small>おなか +10</small><strong>5pt</strong>
-      </button>
-      <button class="shopCard" data-food="おにぎり" data-cost="10" data-value="15">
-        <span class="itemEmoji">🍙</span><b>おにぎり</b><small>おなか +15</small><strong>10pt</strong>
-      </button>
-      <button class="shopCard" data-food="ドーナツ" data-cost="20" data-value="25">
-        <span class="itemEmoji">🍩</span><b>ドーナツ</b><small>おなか +25</small><strong>20pt</strong>
-      </button>
-      <button class="shopCard" data-food="パンケーキ" data-cost="30" data-value="30">
-        <span class="itemEmoji">🥞</span><b>パンケーキ</b><small>おなか +30</small><strong>30pt</strong>
-      </button>
-    </div>
+  <div id="foodShop" class="shopPane active" role="tabpanel" aria-labelledby="foodTab">
+    <p class="shopHint">買ったごはんは、おへやであげよう♪</p>
+    <div class="shopGrid" id="foodProducts"></div>
   </div>
-
-  <div id="dressShop" class="shopPane">
-    <h2>リボン</h2>
-    <div class="shopGrid">
-      <button class="shopCard" data-dress="ピンクリボン" data-cost="15">
-        <img src="./accessories/ribbon_pink.png"><b>ピンク</b><strong>15pt</strong>
-      </button>
-      <button class="shopCard" data-dress="水色リボン" data-cost="15">
-        <img src="./accessories/ribbon_blue.png"><b>水色</b><strong>15pt</strong>
-      </button>
-      <button class="shopCard" data-dress="黄色リボン" data-cost="20">
-        <img src="./accessories/ribbon_yellow.png"><b>黄色</b><strong>20pt</strong>
-      </button>
-      <button class="shopCard" data-dress="紫リボン" data-cost="25">
-        <img src="./accessories/ribbon_purple.png"><b>紫</b><strong>25pt</strong>
-      </button>
-      <button class="shopCard" data-dress="緑リボン" data-cost="25">
-        <img src="./accessories/ribbon_green.png"><b>緑</b><strong>25pt</strong>
-      </button>
-    </div>
-
-    <h2>メガネ・ぼうし</h2>
-    <div class="shopGrid">
-      <button class="shopCard" data-dress="まるメガネ" data-cost="20">
-        <img src="./accessories/glasses.png"><b>まるメガネ</b><strong>20pt</strong>
-      </button>
-      <button class="shopCard" data-dress="あかいぼうし" data-cost="30">
-        <img src="./accessories/hat.png"><b>あかいぼうし</b><strong>30pt</strong>
-      </button>
-    </div>
+  <div id="dressShop" class="shopPane" role="tabpanel" aria-labelledby="dressTab">
+    <p class="shopHint">お気に入りを、おへやで着せてあげよう♪</p>
+    <div class="shopGrid" id="dressProducts"></div>
   </div>
 </section>
 
-<section id="book" class="page imagePage">
-  <img src="./book.png" class="screen contain" alt="ずかん">
+<section id="book" class="page collectionPage" aria-labelledby="bookTitle">
+  <header class="collectionHeader"><p class="eyebrow">いっしょに育つ、出会いのアルバム</p><h1 id="bookTitle">ねこずかん <span aria-hidden="true">🐾</span></h1><div class="collectionSummary"><div><strong id="discoveredCount">0 / 6</strong><span>出会ったねこ</span></div><div><strong id="completedCount">0</strong><span>コンプリート</span></div></div></header>
+  <p class="collectionHint">育てたねことの思い出が、ここに増えていくよ。</p><div id="catGrid" class="catGrid"></div>
+  <p class="collectionFootnote">まだ知らないねこも、いつかきみの家族に。<br>新しいねことの出会いは、これからのお楽しみ。</p>
 </section>
 
-<nav class="bottomNav">
-  <button data-page="todo" id="nav-todo" class="on">📚<br>やること</button>
-  <button data-page="room" id="nav-room">🏠<br>おへや</button>
-  <button data-page="shop" id="nav-shop">🛒<br>ショップ</button>
-  <button data-page="book" id="nav-book">📖<br>ずかん</button>
+<nav class="bottomNav" aria-label="メインメニュー">
+  <button data-page="todo" id="nav-todo" class="on" aria-current="page"><span aria-hidden="true">📚</span>やること</button>
+  <button data-page="room" id="nav-room"><span aria-hidden="true">🏠</span>おへや</button>
+  <button data-page="shop" id="nav-shop"><span aria-hidden="true">🛒</span>ショップ</button>
+  <button data-page="book" id="nav-book"><span aria-hidden="true">📖</span>図鑑</button>
 </nav>
 
-<div id="roomHud" class="roomHud hidden">
-  <span>⭐ <b id="pointsHud">25</b>pt</span>
-  <span>おなか <b id="bellyHud">32</b>/50</span>
+<div id="catModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="catModalTitle"><div class="panel catPanel"><button class="close" id="closeCatModal" aria-label="図鑑の詳細を閉じる">×</button><h2 id="catModalTitle"></h2><div id="catModalBody"></div></div></div>
+<div id="purchaseSuccess" class="purchaseSuccess hidden" role="status" aria-live="polite" aria-atomic="true"><span aria-hidden="true">✦ ♡ ✦</span><strong id="purchaseTitle"></strong><span id="purchaseMessage"></span></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<div id="scoreSuccess" class="scoreSuccess hidden" role="status" aria-live="polite" aria-atomic="true">
+  <span class="successStars" aria-hidden="true">✦ ⭐ ✦</span>
+  <strong id="successPoints"></strong><span id="successMessage"></span><span id="successGrowth" class="hidden"></span>
 </div>
 
-<div id="toast" class="toast hidden"></div>
+<div id="scoreModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="scoreTitle" aria-describedby="scoreTaskName">
+  <div class="panel scorePanel">
+    <button class="close" id="closeScoreModal" aria-label="評価を閉じる">×</button>
+    <p class="eyebrow">きょうのがんばり</p>
+    <h2 id="scoreTitle">どのくらいできた？</h2>
+    <p id="scoreTaskName" class="scoreTaskName"></p>
+    <div id="scoreOptions" class="pointBtns" role="group" aria-label="今日の評価"></div>
+    <p id="scorePreview" class="scorePreview" aria-live="polite">評価をえらんでね</p>
+    <button id="confirmScoreBtn" class="saveBtn" disabled>これで決定！</button>
+    <button id="editScoreTaskBtn" class="editSmall">教材・進捗を編集</button>
+  </div>
+</div>
 
-<div id="itemModal" class="modal hidden">
+<div id="itemModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="itemModalTitle">
   <div class="panel">
-    <button class="close" id="closeItemModal">×</button>
+    <button class="close" id="closeItemModal" aria-label="もちものを閉じる">×</button>
     <h2 id="itemModalTitle">もちもの</h2>
     <div id="itemModalBody" class="modalBody"></div>
   </div>
 </div>
 
-<div id="taskEditor" class="modal hidden">
+<div id="taskEditor" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
   <div class="panel editorPanel">
-    <button class="close" id="closeTaskEditor">×</button>
+    <button class="close" id="closeTaskEditor" aria-label="教材の編集を閉じる">×</button>
     <h2 id="editorTitle">教材を追加</h2>
     <input type="hidden" id="editId">
-    <label>科目</label>
+    <label for="subjectInput">科目</label>
     <select id="subjectInput">
       <option>こくご</option><option>さんすう</option><option>かんじ</option>
       <option>けいさん</option><option>えいご</option><option>そのた</option>
     </select>
-    <label>ドリル名</label><input id="nameInput" placeholder="例：Z会 エブリスタディ">
-    <label>進捗</label>
-    <div class="row"><input id="nowInput" type="number" min="0" value="0"><span>/</span><input id="totalInput" type="number" min="1" value="30"></div>
-    <label>優先度</label>
+    <label for="nameInput">ドリル名</label><input id="nameInput" placeholder="例：Z会 エブリスタディ" maxlength="100">
+    <label for="nowInput">進んだページ / ぜんぶのページ</label>
+    <div class="row"><input id="nowInput" type="number" inputmode="numeric" min="0" step="1" value="0"><span>/</span><input id="totalInput" aria-label="ぜんぶのページ" type="number" inputmode="numeric" min="1" step="1" value="30"></div>
+    <label for="priorityInput">優先度</label>
     <select id="priorityInput"><option>高</option><option>中</option><option>低</option></select>
-    <label>期限</label><input id="dateInput" type="date">
+    <label for="dateInput">期限</label><input id="dateInput" type="date">
     <button class="saveBtn" id="saveTaskBtn">保存</button>
     <button id="deleteBtn" class="deleteBtn hidden">削除</button>
   </div>
 </div>
 
 </div>
-<script src="./app.js?v=10"></script>
+<script src="./catalog.js?v=25"></script>
+<script src="./cats.js?v=26"></script>
+<script src="./app.js?v=27"></script>
 </body>
 </html>
